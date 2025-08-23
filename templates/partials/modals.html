@@ -1,0 +1,27 @@
+{% load static %} 
+<!-- Sistema de registro oculto -->
+<input type="checkbox" id="registro-toggle" style="display: none;">
+<div class="formulario-registro" novalidate>
+    <h5 style="color: #F5E7C1; text-align: center;">Registro del Reino</h5>
+    <form id="registro-form">
+        <div class="campo-formulario">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required maxlength="50" pattern="[A-Za-zÁ-ú\s]+" minlength="3" title="Solo letras y espacios">
+        </div>
+        <div class="campo-formulario">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <button type="submit" class="boton-medieval">Unirse</button>
+    </form>
+</div>
+
+<!-- Sección de comentarios (flotante) -->
+<div id="comentarios">
+    <h6>✍️ Tu opinión</h6>
+    <form>
+        <textarea placeholder="Máximo 50 caracteres" maxlength="50" required></textarea>
+        <div class="contador"><span id="chars-left">50</span> restantes</div>
+        <button type="submit" class="boton-medieval">Enviar</button>
+    </form>
+</div>

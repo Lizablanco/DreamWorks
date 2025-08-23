@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}  
+    
+    <!--Metadatos-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}DreamWorks{% endblock %}</title>
+
+    <!--Css y Favicon-->
+    <link rel="stylesheet" href="{% static 'core/css/styles.css' %}">
+    <link rel="icon" href="{% static 'core/img/dreamworks-moon.gif' %}" type="image/gif">
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+</head>
+<body>
+    {% include 'partials/header.html' %}
+    
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    {% include 'partials/footer.html' %}
+
+    {% include 'partials/modals.html' %}
+
+    <!-- Scripts JavaScript -->
+    {% block extra_js %}
+    <script>
+        function mostrarContenido(id) {
+            // Ocultar todos los elementos de información primero
+            const todosInfos = document.querySelectorAll('.pelicula-info');
+            todosInfos.forEach(info => {
+                info.classList.remove('activo');
+            });
+            
+            // Mostrar el elemento clickeado
+            const info = document.getElementById(id);
+            if (info) {
+                info.classList.add('activo');
+            }
+        }
+        
+        // Cerrar los detalles al hacer clic fuera de la tarjeta
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.pelicula-card')) {
+                const todosInfos = document.querySelectorAll('.pelicula-info');
+                todosInfos.forEach(info => {
+                    info.classList.remove('activo');
+                });
+            }
+        });
+    </script>
+    {% endblock %}
+</body>
+</html>

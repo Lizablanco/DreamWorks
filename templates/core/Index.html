@@ -1,0 +1,194 @@
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+<!--Bloque de contenido de las películas :)-->
+{% block content %}
+<!--Título Principal-->
+<div class="dreamworks-main">
+    <h1>Top las Mejores 12 películas de DreamWorks🌙</h1>
+</div>
+
+<div class="peliculas-grid">
+    <!-- Shrek -->
+    <div class="pelicula-card">
+        <div class="image-container">
+            <img src="{% static 'core/img/poster-shrek.png' %}" alt="Poster de Shrek" class="pelicula-img" loading="lazy" onclick="mostrarContenido('info-shrek')">
+            <div class="indicador-click">Click para detalles</div>
+        </div>
+        <h2 class="pelicula-titulo">Shrek</h2>
+        <div id="info-shrek" class="pelicula-info">
+            <p class="pelicula-year">2001</p>
+            <p class="pelicula-desc">Un ogro gruñón rescata a una princesa en una parodia hilarante de los cuentos de hadas. Ganó el primer Óscar a Mejor Película Animada❤️.</p>
+            <p class="disponibilidad">Disponible en: Netflix, Prime Video, Max.</p>
+            <a href="https://dai.ly/x9iiz3s" target="_blank" class="enlace-ver">Ver película 🌟</a>
+        </div>
+    </div>
+    
+    <!-- Cómo Entrenar a tu Dragón -->
+    <div class="pelicula-card">
+        <div class="image-container">
+            <img src="{% static 'core/img/Cómo-entrenar-a-tu-dragón .png' %}" alt="Poster de Cómo entrenar a tu dragón" class="pelicula-img" onclick="mostrarContenido('info-dragon')">
+            <div class="indicador-click">Click para detalles</div>
+        </div>
+        <h2 class="pelicula-titulo">Cómo Entrenar a tu Dragón</h2>
+        <div id="info-dragon" class="pelicula-info">
+            <p class="pelicula-year">2010</p>
+            <p class="pelicula-desc">Un vikingo y su dragón desafían las tradiciones de su aldea🐉.</p>
+            <p class="disponibilidad">Disponible en: SkyShowtime.</p>
+            <a href="https://www.tokyvideo.com/video/como-entrenar-a-tu-dragon-pelicula-en-latino" target="_blank" class="enlace-ver">Ver película 🌟</a>
+        </div>
+    </div>
+    
+    <!-- Kung Fu Panda -->
+    <div class="pelicula-card">
+        <div class="image-container">
+            <img src="{% static 'core/img/Kung-Fu-Panda.png' %}" alt="Poster de Kung Fu Panda" class="pelicula-img" onclick="mostrarContenido('info-panda')">
+            <div class="indicador-click">Click para detalles</div>
+        </div>
+        <h2 class="pelicula-titulo">Kung Fu Panda</h2>
+        <div id="info-panda" class="pelicula-info">
+            <p class="pelicula-year">2008</p>
+            <p class="pelicula-desc">Po, un panda torpe, se convierte en el Guerrero Dragón🐼.</p>
+            <p class="disponibilidad">Disponible en: Netflix, Prime Video.</p>
+            <a href="https://www.tokyvideo.com/es/video/kung-fu-panda-2008-espanol-latino-2" target="_blank" class="enlace-ver">Ver película 🌟</a>
+        </div>
+    </div>
+    
+    <!-- El príncipe de Egipto -->
+    <div class="pelicula-card">
+        <div class="image-container">
+            <img src="{% static 'core/img/El-príncipe-de-Egipto.png' %}" alt="Poster de El príncipe de Egipto" class="pelicula-img" onclick="mostrarContenido('info-principe')">
+            <div class="indicador-click">Click para detalles</div>
+        </div>
+        <h2 class="pelicula-titulo">El príncipe de Egipto</h2>
+        <div id="info-principe" class="pelicula-info">
+            <p class="pelicula-year">1998</p>
+            <p class="pelicula-desc">Adaptación animada de la historia de Moisés👑.</p>
+            <p class="disponibilidad">Disponible en: Movistar Plus+, SkyShowtime.</p>
+            <a href="https://www.tokyvideo.com/es/video/el-principe-de-egipto-pelicula-completa-en-espanol" target="_blank" class="enlace-ver">Ver película 🌟</a>
+        </div>
+    </div>
+    
+    <!-- Shrek 2 -->
+    <div class="pelicula-card">
+        <div class="image-container">
+            <img src="{% static 'core/img/Shrek-2.png' %}" alt="Poster de Shrek 2" class="pelicula-img" onclick="mostrarContenido('info-shrek2')">
+            <div class="indicador-click">Click para detalles</div>
+        </div>
+        <h2 class="pelicula-titulo">Shrek 2</h2>
+        <div id="info-shrek2" class="pelicula-info">
+            <p class="pelicula-year">2004</p>
+            <p class="pelicula-desc">Shrek conoce a sus suegros y enfrenta al Gato con Botas🐱👢.</p>
+            <p class="disponibilidad">Disponible en: Prime Video, Movistar Plus+.</p>
+            <a href="https://www.tokyvideo.com/es/video/shrek-2-pelicula-completa-espanol-latino" target="_blank" class="enlace-ver">Ver película 🌟</a>
+        </div>
+    </div>
+    
+    <!-- El origen de los guardianes -->
+    <div class="pelicula-card">
+        <div class="image-container">
+            <img src="{% static 'core/img/El-origen-de-los-guardianes.png' %}" alt="Poster de El origen de los guardianes" class="pelicula-img" onclick="mostrarContenido('info-guardianes')">
+            <div class="indicador-click">Click para detalles</div>
+        </div>
+        <h2 class="pelicula-titulo">El origen de los guardianes</h2>
+        <div id="info-guardianes" class="pelicula-info">
+            <p class="pelicula-year">2012</p>
+            <p class="pelicula-desc">Figuras míticas (Santa, Conejo de Pascua) protegen a los niños🌟.</p>
+            <p class="disponibilidad">Disponible en: Prime Video.</p>
+            <a href="https://www.tokyvideo.com/es/video/el-origen-de-los-guardianes-6" target="_blank" class="enlace-ver">Ver película 🌟</a>
+        </div>
+    </div>
+
+    <!-- Wallace & Gromit -->
+    <div class="pelicula-card">
+        <div class="image-container">
+            <img src="{% static 'core/img/Wallace-&-Gromit.png' %}" alt="Wallace & Gromit: La maldición de las verduras" class="pelicula-img" onclick="mostrarContenido('info-wallace')">
+            <div class="indicador-click">Click para detalles</div>
+        </div>
+        <h2 class="pelicula-titulo">Wallace & Gromit: La maldición de las verduras</h2>
+        <div id="info-wallace" class="pelicula-info">
+            <p class="pelicula-year">2005</p>
+            <p class="pelicula-desc">Stop-motion sobre un inventor y su perro contra un misterioso villano🧀🐕.</p>
+            <p class="disponibilidad">Disponible en: Prime Video.</p>
+            <a href="https://www.tokyvideo.com/video/wallace-e-gromit-a-batalha-dos-vegetais-pud1nn" target="_blank" class="enlace-ver">Ver película 🌟</a>
+        </div>
+    </div>
+
+    <!-- Pollitos en fuga -->
+    <div class="pelicula-card">
+        <div class="image-container">
+            <img src="{% static 'core/img/Pollitos-en-fuga.png' %}" alt="Pollitos en fuga" class="pelicula-img" onclick="mostrarContenido('info-pollitos')">
+            <div class="indicador-click">Click para detalles</div>
+        </div>
+        <h2 class="pelicula-titulo">Pollitos en fuga</h2>
+        <div id="info-pollitos" class="pelicula-info">
+            <p class="pelicula-year">2000</p>
+            <p class="pelicula-desc">Stop-motion, parodia de películas de guerra y humor inteligente🐥.</p>
+            <p class="disponibilidad">Disponible en: Apple TV (alquiler).</p>
+            <a href="https://www.tokyvideo.com/video/gigi-pollitos-en-fuga" target="_blank" class="enlace-ver">Ver película 🌟</a>
+        </div>
+    </div>
+
+    <!-- El gato con botas 2 -->
+    <div class="pelicula-card">
+        <div class="image-container">
+            <img src="{% static 'core/img/El-gato-con-botas-2.png' %}" alt="El gato con botas: El último deseo" class="pelicula-img" onclick="mostrarContenido('info-gato')">
+            <div class="indicador-click">Click para detalles</div>
+        </div>
+        <h2 class="pelicula-titulo">El gato con botas: El último deseo</h2>
+        <div id="info-gato" class="pelicula-info">
+            <p class="pelicula-year">2022</p>
+            <p class="pelicula-desc">El Gato busca recuperar sus vidas perdidas 🐱⚔️.</p>
+            <p class="disponibilidad">Disponible en: Prime Video.</p>
+            <a href="https://www.tokyvideo.com/es/video/el-gato-con-botas-el-ultimo-deseo-pelicula-completa-en-espanol-latino" target="_blank" class="enlace-ver">Ver película 🌟</a>
+        </div>
+    </div>
+
+    <!-- Madagascar -->
+    <div class="pelicula-card">
+        <div class="image-container">
+            <img src="{% static 'core/img/Madagascar.png' %}" alt="Madagascar" class="pelicula-img" onclick="mostrarContenido('info-madagascar')">
+            <div class="indicador-click">Click para detalles</div>
+        </div>
+        <h2 class="pelicula-titulo">Madagascar</h2>
+        <div id="info-madagascar" class="pelicula-info">
+            <p class="pelicula-year">2005</p>
+            <p class="pelicula-desc">Animales del zoológico terminan en la selva🦁🐧.</p>
+            <p class="disponibilidad">Disponible en: Netflix, Prime Video.</p>
+            <a href="https://www.tokyvideo.com/es/video/madagascar-4" target="_blank" class="enlace-ver">Ver película 🌟</a>
+        </div>
+    </div>
+
+    <!-- La ruta hacia El Dorado -->
+    <div class="pelicula-card">
+        <div class="image-container">
+            <img src="{% static 'core/img/La-ruta-hacia-El-Dorado.png' %}" alt="La ruta hacia El Dorado" class="pelicula-img" onclick="mostrarContenido('info-dorado')">
+            <div class="indicador-click">Click para detalles</div>
+        </div>
+        <h2 class="pelicula-titulo">La ruta hacia El Dorado</h2>
+        <div id="info-dorado" class="pelicula-info">
+            <p class="pelicula-year">2000</p>
+            <p class="pelicula-desc">Dos timadores buscan la ciudad perdida🌟</p>
+            <p class="disponibilidad">Disponible en: Apple TV, Prime Video.</p>
+            <a href="https://www.tokyvideo.com/es/video/el-camino-hacia-el-dorado" target="_blank" class="enlace-ver">Ver película 🌟</a>
+        </div>
+    </div>
+
+    <!-- Robot Salvaje -->
+    <div class="pelicula-card">
+        <div class="image-container">
+            <img src="{% static 'core/img/Robot-Salvaje.png' %}" alt="Robot Salvaje" class="pelicula-img" onclick="mostrarContenido('info-robot')">
+            <div class="indicador-click">Click para detalles</div>
+        </div>
+        <h2 class="pelicula-titulo">Robot Salvaje</h2>
+        <div id="info-robot" class="pelicula-info">
+            <p class="pelicula-year">2024</p>
+            <p class="pelicula-desc">Un robot aprende a convivir con animales en la naturaleza.</p>
+            <p class="disponibilidad">Disponible en: Cines (próximamente en streaming).</p>
+            <a href="https://www.tokyvideo.com/es/video/robot-salvaje-2024-pelicula-completa-espanol-latino" target="_blank" class="enlace-ver">Ver película 🌟</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
