@@ -146,6 +146,55 @@ html {
 .boton-medieval:hover {
     background: #5C3317;
 }
+/* Sistema de inicio de sesión flotante */
+#login-toggle {
+    display: none;
+}
+.formulario-login {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgb(145, 122, 247);
+    padding: 2rem;
+    border: 3px solid #F5E7C1;
+    border-radius: 10px;
+    z-index: 1001;
+    display: none;
+    width: 300px;
+}
+#login-toggle:checked~.formulario-login {
+    display: block;
+    animation: aparecer 0.4s ease-out;
+}
+/* Estilos de formulario */
+.campo-formulario {
+    margin-bottom: 1rem;
+}
+.campo-formulario label {
+    display: block;
+    color: #F5E7C1;
+    margin-bottom: 0.3rem;
+}
+.campo-formulario input {
+    width: 100%;
+    padding: 0.5rem;
+    background: rgba(245, 231, 193, 0.9);
+    border: 1px solid #e6d119;
+}
+.boton-medieval {
+    background: #473804;
+    color: #fffb26;
+    border: none;
+    padding: 0.5rem 1rem;
+    width: 100%;
+    font-family: 'MedievalSharp', cursive;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.boton-medieval:hover {
+    background: #5C3317;
+}
 
 
 /* Sección de comentarios flotante */

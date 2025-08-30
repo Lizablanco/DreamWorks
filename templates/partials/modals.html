@@ -1,9 +1,11 @@
 {% load static %} 
+
 <!-- Sistema de registro oculto -->
 <input type="checkbox" id="registro-toggle" style="display: none;">
 <div class="formulario-registro" novalidate>
     <h5 style="color: #F5E7C1; text-align: center;">Registro del Reino</h5>
-    <form id="registro-form">
+    <form method="post" action="{%url 'register' %}" id=registro-form>
+        {% csrf_token %}
         <div class="campo-formulario">
             <label for="nombre">Nombre:</label>
             <input type="text" id="nombre" name="nombre" required maxlength="50" pattern="[A-Za-zÁ-ú\s]+" minlength="3" title="Solo letras y espacios">
@@ -12,14 +14,32 @@
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required>
         </div>
+        <div class="campo-formulario">
+            <label for="password">Contraseña:</label>
+            <input type="password" id="password" name="password" required minlength="6">
         <button type="submit" class="boton-medieval">Unirse</button>
     </form>
 </div>
 
+<!--Sistema de inicio de sesion login(oculto)-->
+<input type="checkbox" id="login-toggle" style="display: none;">
+<div class="formulario-login" novalidate>
+    <h6 style="color: #F5E7C1; text-align: center;">Inicio de Sesión</h6>
+    <form method="post" action="{%url 'login' %}" id=login-form>
+        {% csrf_token %}
+        <div class="campo-formulario">
+            <label for="email-login">Email:</label>
+            <input type="email" id="email-login" name="email-login" required>
+        </div>
+        <div class="campo-formulario">
+            <label for="password-login">Contraseña:</label>
+            <input type="password" id="password-login" name="password-login" required minlength="6">
+
 <!-- Sección de comentarios (flotante) -->
 <div id="comentarios">
-    <h6>✍️ Tu opinión</h6>
-    <form>
+    <h7>✍️ Tu opinión</h7>
+    <form method="post" action="{%url 'comment' %}" id="comentarios-form">
+        {% csrf_token %}
         <textarea placeholder="Máximo 50 caracteres" maxlength="50" required></textarea>
         <div class="contador"><span id="chars-left">50</span> restantes</div>
         <button type="submit" class="boton-medieval">Enviar</button>

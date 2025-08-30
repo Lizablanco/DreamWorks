@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 # ----------------------------------------------------------------------------------o
-# Custom User Model
+# Custom User Model, cambios del auth_user de django
 # ----------------------------------------------------------------------------------
 class User(AbstractUser):
     username = models.CharField(max_length=150, unique=True)
@@ -23,8 +23,8 @@ class User(AbstractUser):
     def __str__(self):
         return self.username 
 
-# ----------------------------------------------------------------------------------o
-# Perfil   recuerde poner esto en todos los modelos
+# ----------------------------------------------------------------------------------
+# Perfil   
 # ----------------------------------------------------------------------------------
 class Perfil(models.Model):
     id_user = models.CharField(max_length=150, unique=True, null=False)
@@ -39,19 +39,22 @@ class Perfil(models.Model):
     def __str__(self):
         return self.user
 
-class Opinion(models.Model):
-    id_user = models.CharField(max_length=150, unique=True, null=False)
-    email= models.EmailField(unique=True, null=False)
-    descripcion= models.TextField(null=False)
-    fecha_registro= models.DateTimeField(auto_now_add=True, null=False)
-    id_movie= models.IntegerField(null=False)
+# ----------------------------------------------------------------------------------
+# Genero de peliculas
+# ----------------------------------------------------------------------------------
+class genero(models.Model):
+    nombre=models.CharField(max_length=150, null=False)
+    descripcion=models.TextField(null=False)
     
     class meta:
-        verbose_name = 'Opinion de Usuario'
-        verbose_name_plural = 'Opiniones de Usuario'
+        verbose_name = 'Genero'
+        verbose_name_plural = 'Generos'
     def __str__(self):
-        return self.user
+        return self.nombre
 
+# ----------------------------------------------------------------------------------
+# Movie(Peliculas)
+# ----------------------------------------------------------------------------------
 class Movie(models.Model):
     titulo=models.CharField(max_length=150, null=False)
     descripcion=models.TextField(null=False)
@@ -67,6 +70,38 @@ class Movie(models.Model):
     def __str__(self):
         return self.titulo
 
+# ----------------------------------------------------------------------------------
+# Opinion
+# ----------------------------------------------------------------------------------
+class Opinion(models.Model):
+    id_user = models.CharField(max_length=150, unique=True, null=False)
+    email= models.EmailField(unique=True, null=False)
+    descripcion= models.TextField(null=False)
+    fecha_registro= models.DateTimeField(auto_now_add=True, null=False)
+    id_movie= models.IntegerField(null=False)
+    
+    class meta:
+        verbose_name = 'Opinion de Usuario'
+        verbose_name_plural = 'Opiniones de Usuario'
+    def __str__(self):
+        return self.user
+
+# ----------------------------------------------------------------------------------
+# Curiosidades de las peliculas 
+# ----------------------------------------------------------------------------------
+class curiosidades(models.Model):
+    titulo=models.CharField(max_length=150, null=False)
+    descripcion=models.TextField(null=False)
+    
+    class meta:
+        verbose_name = 'Curiosidad'
+        verbose_name_plural = 'Curiosidades'
+    def __str__(self):
+        return self.titulo
+
+# ----------------------------------------------------------------------------------
+# Para descargar peliculas
+# ----------------------------------------------------------------------------------
 class Descargas_user_movie(models.Model):
     id_user=models.CharField(max_length=150, null=False)
     id_movie=models.CharField(max_length=150, null=False)
@@ -78,6 +113,9 @@ class Descargas_user_movie(models.Model):
     def __str__(self):
         return self.id_user + " - " + self.id_movie
 
+# ----------------------------------------------------------------------------------
+# Genero-Movie(tabla intermedia)
+# ----------------------------------------------------------------------------------
 class genero_movie(models.Model):
     id_movie=models.CharField(max_length=150, null=False)
     id_genero=models.CharField(max_length=150, null=False)
@@ -88,16 +126,11 @@ class genero_movie(models.Model):
     def __str__(self):
         return self.id_movie + " - " + self.id_genero
 
-class genero(models.Model):
-    nombre=models.CharField(max_length=150, null=False)
-    descripcion=models.TextField(null=False)
-    
-    class meta:
-        verbose_name = 'Genero'
-        verbose_name_plural = 'Generos'
-    def __str__(self):
-        return self.nombre
 
+
+# ----------------------------------------------------------------------------------
+# Movie-curiosiades(tabla intermedia)
+# ----------------------------------------------------------------------------------
 class Movie_curiosidades(models.Model):
     id_movie=models.CharField(max_length=150, null=False)
     id_curiosidades=models.CharField(max_length=150, null=False)
@@ -109,13 +142,5 @@ class Movie_curiosidades(models.Model):
     def __str__(self):
         return self.id_movie + " - " + self.id_curiosidades
 
-class curiosidades(models.Model):
-    titulo=models.CharField(max_length=150, null=False)
-    descripcion=models.TextField(null=False)
-    
-    class meta:
-        verbose_name = 'Curiosidad'
-        verbose_name_plural = 'Curiosidades'
-    def __str__(self):
-        return self.titulo
+
     
