@@ -5,3 +5,4 @@ from django.views import View
 def index(request):
     return render(request, 'core\Index.html')
 
+###codigo de prueba
