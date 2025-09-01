@@ -15,28 +15,74 @@ html {
     background: linear-gradient(to left, rgb(69, 67, 136));
 }
 
-/* título principal */
+/*Letra DreamWorks*/
+.dreamworks-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
 .dreamworks-main {
-    font-family: 'UnifrakturMaguntia', cursive;
-    font-size: 7rem;
-    position: relative;
-    z-index: 5;
-    height: 100%;
-    width: 100%;
-    margin: 1rem auto;
-    padding: 4rem;
-    background: url("core/img/dreamworks-moon.gif") center;
-    background-size: 40% auto;
-    border-radius: 15px;
-    color: #f7ec20f6;
-    text-align: center;
-    box-shadow: 0 0 20px rgba(164, 160, 209, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
 }
 
 .dreamworks-main h1 {
-    font-size: 2.5rem;
-    text-shadow: 0 0 10px hsl(60, 38%, 6%);
-    margin-bottom: 2rem;
+    font-family: 'UnifrakturMaguntia', cursive;
+    font-size: 5.5rem;
+    letter-spacing: 4px;
+    font-weight: normal;
+    text-align: center;
+
+    /* Efecto de texto luminoso sin sombras oscuras */
+    color: #fff;
+    background: linear-gradient(45deg, #f7ec20, #ffd700, #fffacd, #f7ec20);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: textShine 3s ease-in-out infinite alternate;
+
+    /* Sutil resplandor */
+    text-shadow:
+        0 0 10px rgba(255, 230, 100, 0.4),
+        0 0 20px rgba(255, 220, 80, 0.3),
+        0 0 30px rgba(255, 209, 60, 0.877);
+}
+
+/* Animación para el texto */
+@keyframes textShine {
+    0% {
+        background-position: 0% 50%;
+        text-shadow:
+            0 0 10px rgba(255, 230, 100, 0.4),
+            0 0 20px rgba(255, 220, 80, 0.3);
+    }
+
+    100% {
+        background-position: 100% 50%;
+        text-shadow:
+            0 0 15px rgba(255, 229, 100, 0.938),
+            0 0 25px rgba(255, 220, 80, 0.4),
+            0 0 35px rgba(255, 209, 60, 0.89);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dreamworks-main h1 {
+        font-size: 4rem;
+        letter-spacing: 3px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dreamworks-main h1 {
+        font-size: 3.2rem;
+        letter-spacing: 2px;
+    }
 }
 
 /* Navegador Flotante */
@@ -76,6 +122,37 @@ html {
 .menu-lista a:hover,
 .menu-lista label:hover {
     text-shadow: 0 0 8px #FFD700;
+}
+
+/* Para forzar los estilos de los registros e inicio de sesion */
+.formulario-registro,
+.formulario-login {
+    position: static !important;
+    display: block !important;
+    float: left;
+    clear: both;
+}
+
+/* Forzado para los estilos*/
+.formulario-registro,
+.formulario-login {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 1001 !important;
+    display: none !important;
+    background: rgb(145, 122, 247) !important;
+    padding: 2rem !important;
+    border: 3px solid #F5E7C1 !important;
+    border-radius: 10px !important;
+    width: 300px !important;
+}
+
+/* Cuando estén activos */
+.formulario-registro[style*="display: block"],
+.formulario-login[style*="display: block"] {
+    display: block !important;
 }
 
 /* Sistema de registro flotante */
@@ -146,10 +223,12 @@ html {
 .boton-medieval:hover {
     background: #5C3317;
 }
+
 /* Sistema de inicio de sesión flotante */
 #login-toggle {
     display: none;
 }
+
 .formulario-login {
     position: fixed;
     top: 50%;
@@ -163,25 +242,30 @@ html {
     display: none;
     width: 300px;
 }
+
 #login-toggle:checked~.formulario-login {
     display: block;
     animation: aparecer 0.4s ease-out;
 }
+
 /* Estilos de formulario */
 .campo-formulario {
     margin-bottom: 1rem;
 }
+
 .campo-formulario label {
     display: block;
     color: #F5E7C1;
     margin-bottom: 0.3rem;
 }
+
 .campo-formulario input {
     width: 100%;
     padding: 0.5rem;
     background: rgba(245, 231, 193, 0.9);
     border: 1px solid #e6d119;
 }
+
 .boton-medieval {
     background: #473804;
     color: #fffb26;
@@ -192,6 +276,7 @@ html {
     cursor: pointer;
     transition: all 0.3s;
 }
+
 .boton-medieval:hover {
     background: #5C3317;
 }
@@ -286,11 +371,33 @@ textarea {
 .pelicula-titulo {
     color: #ffffff;
     text-align: center;
-    font-size: 1.6rem;
+    font-size: 1.8rem;
+    /* Un poco más grande para mejor legibilidad en cursiva */
     text-shadow: 0 0 5px #ffdd1a, 0 0 10px #ffdd1a;
-    margin: 10px 15px;
+    margin: 20px 15px;
     padding: 0;
+
+    /* Estilo cursiva elegante */
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 700;
+    letter-spacing: 1px;
+
+    /* Efecto de resplandor adicional */
+    animation: glowEffect 3s ease-in-out infinite alternate;
 }
+
+/* Efecto de resplandor suave */
+@keyframes glowEffect {
+    0% {
+        text-shadow: 0 0 5px #ffdd1a, 0 0 10px #ffdd1a;
+    }
+
+    100% {
+        text-shadow: 0 0 8px #ffdd1a, 0 0 15px #ffdd1a, 0 0 20px #ffdd1a88;
+    }
+}
+
 
 /* Información de la película (inicialmente oculta) */
 .pelicula-info {

@@ -8,10 +8,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}DreamWorks{% endblock %}</title>
 
-    <!--Css y Favicon-->
-    <link rel="stylesheet" href="{% static 'core/css/styles.css' %}">
+    <!--Bootstrap, Css y Favicon-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'core/css/styles.css' %}?v=1.4">
     <link rel="icon" href="{% static 'core/img/dreamworks-moon.gif' %}" type="image/gif">
     <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+    
+    <!-- Estilos inline críticos -->
+    <style>
+        /* ESTILOS FORZADOS PARA SOBREESCRIBIR BOOTSTRAP */
+        .dreamworks-main {
+            font-family: 'UnifrakturMaguntia', cursive !important;
+            font-size: 8rem !important;
+            position: relative !important;
+            z-index: 5 !important;
+            width: 100% !important;
+            margin: 4rem auto !important;
+            padding: 3rem !important;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
+            border-radius: 15px !important;
+            color: #f7ec20 !important;
+            text-align: center !important;
+            box-shadow: 0 0 30px rgba(247, 236, 32, 0.3) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            min-height: 250px !important;
+            border: 2px solid #f7ec20 !important;
+        }
+        
+        .dreamworks-main h1 {
+            font-size: 4.5rem !important;
+            text-shadow: 0 0 10px #000, 0 0 20px #f7ec20, 0 0 30px #f7ec20 !important;
+            margin: 0 !important;
+            letter-spacing: 3px !important;
+            font-weight: normal !important;
+            line-height: 1.2 !important;
+        }
+        
+        /* Asegurar que los formularios estén ocultos inicialmente */
+        .formulario-registro,
+        .formulario-login {
+            display: none !important;
+        }
+    </style>
 </head>
 <body>
     {% include 'partials/header.html' %}
@@ -27,32 +68,148 @@
     {% include 'partials/modals.html' %}
 
     <!-- Scripts JavaScript -->
-    {% block extra_js %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Script para animaciones de fondo -->
     <script>
-        function mostrarContenido(id) {
-            // Ocultar todos los elementos de información primero
+    // Función para mostrar/ocultar información de películas
+    function mostrarContenido(id) {
+        const todosInfos = document.querySelectorAll('.pelicula-info');
+        todosInfos.forEach(info => {
+            info.classList.remove('activo');
+        });
+        
+        const info = document.getElementById(id);
+        if (info) {
+            info.classList.add('activo');
+        }
+    }
+
+    // Cerrar los detalles de películas al hacer clic fuera
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.pelicula-card')) {
             const todosInfos = document.querySelectorAll('.pelicula-info');
             todosInfos.forEach(info => {
                 info.classList.remove('activo');
             });
+        }
+    });
+
+    // CÓDIGO MEJORADO PARA FORMULARIOS
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM cargado - inicializando formularios...');
+        
+        const formularioRegistro = document.querySelector('.formulario-registro');
+        const formularioLogin = document.querySelector('.formulario-login');
+        const labelRegistro = document.querySelector('label[for="registro-toggle"]');
+        const labelLogin = document.querySelector('label[for="login-toggle"]');
+        
+        // Verificar que los elementos existen
+        if (!formularioRegistro) console.error('No se encontró .formulario-registro');
+        if (!formularioLogin) console.error('No se encontró .formulario-login');
+        if (!labelRegistro) console.error('No se encontró label[for="registro-toggle"]');
+        if (!labelLogin) console.error('No se encontró label[for="login-toggle"]');
+        
+        function cerrarTodosFormularios() {
+            if (formularioRegistro) formularioRegistro.style.display = 'none';
+            if (formularioLogin) formularioLogin.style.display = 'none';
+        }
+        
+        function asegurarPosicionamiento() {
+            const estiloFixed = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1001; background: rgb(145, 122, 247); padding: 2rem; border: 3px solid #F5E7C1; border-radius: 10px; width: 300px;';
             
-            // Mostrar el elemento clickeado
-            const info = document.getElementById(id);
-            if (info) {
-                info.classList.add('activo');
+            if (formularioRegistro) {
+                formularioRegistro.style.cssText = estiloFixed + formularioRegistro.style.cssText;
+            }
+            
+            if (formularioLogin) {
+                formularioLogin.style.cssText = estiloFixed + formularioLogin.style.cssText;
             }
         }
         
-        // Cerrar los detalles al hacer clic fuera de la tarjeta
-        document.addEventListener('click', function(event) {
-            if (!event.target.closest('.pelicula-card')) {
-                const todosInfos = document.querySelectorAll('.pelicula-info');
-                todosInfos.forEach(info => {
-                    info.classList.remove('activo');
-                });
+        // Configurar eventos
+        if (labelRegistro && formularioRegistro) {
+            labelRegistro.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                asegurarPosicionamiento();
+                cerrarTodosFormularios();
+                formularioRegistro.style.display = 'block';
+                console.log('Formulario registro mostrado');
+            });
+        }
+        
+        if (labelLogin && formularioLogin) {
+            labelLogin.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                asegurarPosicionamiento();
+                cerrarTodosFormularios();
+                formularioLogin.style.display = 'block';
+                console.log('Formulario login mostrado');
+            });
+        }
+        
+        // Cerrar formularios al hacer clic fuera
+        document.addEventListener('click', function(e) {
+            if (formularioRegistro && formularioRegistro.style.display === 'block') {
+                if (!e.target.closest('.formulario-registro') && !e.target.closest('label[for="registro-toggle"]')) {
+                    formularioRegistro.style.display = 'none';
+                }
+            }
+            
+            if (formularioLogin && formularioLogin.style.display === 'block') {
+                if (!e.target.closest('.formulario-login') && !e.target.closest('label[for="login-toggle"]')) {
+                    formularioLogin.style.display = 'none';
+                }
             }
         });
+        
+        // Prevenir que el clic en los formularios los cierre
+        if (formularioRegistro) {
+            formularioRegistro.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+        
+        if (formularioLogin) {
+            formularioLogin.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+        
+        // Cerrar con tecla ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                cerrarTodosFormularios();
+            }
+        });
+        
+        // Inicializar posicionamiento
+        asegurarPosicionamiento();
+    });
+
+    // Contador de caracteres para comentarios
+    document.addEventListener('DOMContentLoaded', function() {
+        const textarea = document.querySelector('#comentarios-form textarea');
+        const contador = document.querySelector('#chars-left');
+        
+        if (textarea && contador) {
+            textarea.addEventListener('input', function() {
+                const caracteresRestantes = 50 - this.value.length;
+                contador.textContent = caracteresRestantes;
+                
+                if (caracteresRestantes < 10) {
+                    contador.style.color = '#ff4444';
+                } else {
+                    contador.style.color = '#F5E7C1';
+                }
+            });
+        }
+    });
     </script>
+    
+    {% block extra_js %}
     {% endblock %}
 </body>
 </html>

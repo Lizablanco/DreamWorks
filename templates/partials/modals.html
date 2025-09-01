@@ -2,9 +2,10 @@
 
 <!-- Sistema de registro oculto -->
 <input type="checkbox" id="registro-toggle" style="display: none;">
-<div class="formulario-registro" novalidate>
+<div class="formulario-registro" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1001; background: rgb(145, 122, 247); padding: 2rem; border: 3px solid #F5E7C1; border-radius: 10px; width: 300px;">
+    <!-- contenido del formulario registro -->
     <h5 style="color: #F5E7C1; text-align: center;">Registro del Reino</h5>
-    <form method="post" action="{%url 'register' %}" id=registro-form>
+    <form method="post" action="{% url 'register' %}" id="registro-form">
         {% csrf_token %}
         <div class="campo-formulario">
             <label for="nombre">Nombre:</label>
@@ -17,15 +18,17 @@
         <div class="campo-formulario">
             <label for="password">Contraseña:</label>
             <input type="password" id="password" name="password" required minlength="6">
+        </div> 
         <button type="submit" class="boton-medieval">Unirse</button>
     </form>
 </div>
 
-<!--Sistema de inicio de sesion login(oculto)-->
+<!-- Sistema de inicio de sesión login (oculto) -->
 <input type="checkbox" id="login-toggle" style="display: none;">
-<div class="formulario-login" novalidate>
+<div class="formulario-login" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1001; background: rgb(145, 122, 247); padding: 2rem; border: 3px solid #F5E7C1; border-radius: 10px; width: 300px;">
+    <!-- contenido del formulario login -->
     <h6 style="color: #F5E7C1; text-align: center;">Inicio de Sesión</h6>
-    <form method="post" action="{%url 'login' %}" id=login-form>
+    <form method="post" action="{% url 'login' %}" id="login-form">
         {% csrf_token %}
         <div class="campo-formulario">
             <label for="email-login">Email:</label>
@@ -34,11 +37,15 @@
         <div class="campo-formulario">
             <label for="password-login">Contraseña:</label>
             <input type="password" id="password-login" name="password-login" required minlength="6">
+        </div> 
+        <button type="submit" class="boton-medieval">Iniciar Sesión</button> <!-- Faltaba el botón de submit -->
+    </form>
+</div>
 
 <!-- Sección de comentarios (flotante) -->
 <div id="comentarios">
-    <h7>✍️ Tu opinión</h7>
-    <form method="post" action="{%url 'comment' %}" id="comentarios-form">
+    <h6>✍️ Tu opinión</h6> 
+    <form method="post" action="{% url 'comment' %}" id="comentarios-form">
         {% csrf_token %}
         <textarea placeholder="Máximo 50 caracteres" maxlength="50" required></textarea>
         <div class="contador"><span id="chars-left">50</span> restantes</div>
