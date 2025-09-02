@@ -128,3 +128,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Modelo User personalizado que hereda de AbstractUser, aqui le decimos a Django que use este modelo 
 # que creamos y no el que viene por defecto
 AUTH_USER_MODEL = 'core.User'
+
+#configuracion para media
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR/'media'

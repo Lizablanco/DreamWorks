@@ -1,4 +1,6 @@
 # models.py
+from django.urls import reverse
+from django.utils.text import slugify
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
@@ -55,24 +57,47 @@ class Genero(models.Model):
 # ----------------------------------------------------------------------------------
 # Movie(Peliculas)
 # ----------------------------------------------------------------------------------
+
 class Movie(models.Model):
-    titulo = models.CharField(max_length=150)
-    descripcion = models.TextField()
+    titulo            = models.CharField(max_length=150)
+    descripcion       = models.TextField()
     fecha_lanzamiento = models.DateField()
-    duracion = models.IntegerField()
-    archivo = models.FileField(upload_to='movies/')
-    poster = models.ImageField(upload_to='posters/')
-    autores = models.CharField(max_length=250)
-    
-    generos = models.ManyToManyField(Genero, related_name='peliculas')
-    curiosidades = models.ManyToManyField('Curiosidad', through='MovieCuriosidad', related_name='peliculas')
-    
+    duracion          = models.IntegerField(help_text="Duración en minutos")
+    archivo           = models.FileField(upload_to='movies/')
+    poster            = models.ImageField(upload_to='posters/')
+    autores           = models.CharField(max_length=250, help_text="Lista de autores o estudio")
+    generos           = models.ManyToManyField('Genero', related_name='peliculas')
+    curiosidades      = models.ManyToManyField('Curiosidad', through='MovieCuriosidad', related_name='peliculas')
+
+    # Slug para URLs amigables
+    slug = models.SlugField(unique=True, blank=True)
+
     class Meta:
-        verbose_name = 'Película'
+        verbose_name        = 'Película'
         verbose_name_plural = 'Películas'
-        
+
+    def save(self, *args, **kwargs):
+        # Si aún no tiene slug, generarlo y garantizar unicidad
+        if not self.slug:
+            base_slug = slugify(self.titulo)
+            slug      = base_slug
+            contador  = 1
+
+            # Evitar colisiones de slug
+            while Movie.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{contador}"
+                contador += 1
+
+            self.slug = slug
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.titulo
+
+    def get_absolute_url(self):
+        return reverse('pelicula_info', args=[self.slug])
+
 
 # ----------------------------------------------------------------------------------
 # Opinión

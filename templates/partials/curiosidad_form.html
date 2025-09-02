@@ -1,0 +1,21 @@
+<form method="post">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+
+  <div class="mb-3">
+    {{ form.titulo.label_tag }}
+    {{ form.titulo }}
+    {{ form.titulo.errors }}
+  </div>
+
+  <div class="mb-3">
+    {{ form.descripcion.label_tag }}
+    {{ form.descripcion }}
+    {{ form.descripcion.errors }}
+  </div>
+
+  <button type="submit" class="btn btn-primary">
+    {% if object %}Guardar cambios{% else %}Crear curiosidad{% endif %}
+  </button>
+  <a href="{% url 'curiosidad_list' %}" class="btn btn-link">Cancelar</a>
+</form>

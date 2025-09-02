@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-4">
+  <h2>{% if object %}Editar género{% else %}Nuevo género{% endif %}</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div class="mb-3">
+      {{ form.nombre.label_tag }}
+      {{ form.nombre }}
+      {{ form.nombre.errors }}
+    </div>
+
+    <div class="mb-3">
+      {{ form.descripcion.label_tag }}
+      {{ form.descripcion }}
+      {{ form.descripcion.errors }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+      {% if object %}Guardar cambios{% else %}Crear{% endif %}
+    </button>
+    <a href="{% url 'genero_list' %}" class="btn btn-link">Cancelar</a>
+  </form>
+</div>
+{% endblock %}

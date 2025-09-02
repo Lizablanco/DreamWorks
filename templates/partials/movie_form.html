@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-4">
+    <h1>{% if object %}Editar{% else %}Nueva{% endif %} película</h1>
+    <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div class="mb-3">
+        {{ form.titulo.label_tag }}
+        {{ form.titulo }}
+        {{ form.titulo.errors }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.descripcion.label_tag }}
+        {{ form.descripcion }}
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-3">
+        {{ form.fecha_lanzamiento.label_tag }}
+        {{ form.fecha_lanzamiento }}
+        </div>
+        <div class="col-md-4 mb-3">
+        {{ form.duracion.label_tag }}
+        {{ form.duracion }}
+        </div>
+    </div>
+
+    <div class="mb-3">
+        {{ form.autores.label_tag }}
+        {{ form.autores }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.archivo.label_tag }}
+        {{ form.archivo }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.poster.label_tag }}
+        {{ form.poster }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        {% if object %}Guardar{% else %}Crear{% endif %}
+    </button>
+    <a href="{% url 'movie_list' %}" class="btn btn-link">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

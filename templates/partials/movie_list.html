@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-4">
+    <h1>Películas</h1>
+    <a href="{% url 'movie_nueva' %}" class="btn btn-success mb-3">+ Nueva película</a>
+    <table class="table table-striped">
+    <thead>
+        <tr>
+        <th>Título</th><th>Año</th><th>Duración</th><th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for m in peliculas %}
+        <tr>
+        <td>{{ m.titulo }}</td>
+        <td>{{ m.fecha_lanzamiento.year }}</td>
+        <td>{{ m.duracion }} min</td>
+        <td>
+            <a href="{% url 'movie_editar' m.pk %}" class="btn btn-sm btn-primary">✏️</a>
+            <a href="{% url 'movie_borrar' m.pk %}" class="btn btn-sm btn-danger">🗑️</a>
+        </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">No hay películas registradas.</td></tr>
+        {% endfor %}
+    </tbody>
+    </table>
+</div>
+{% endblock %}

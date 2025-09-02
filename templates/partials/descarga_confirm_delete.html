@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+  <h1>Eliminar descarga</h1>
+  <p>¿Seguro que deseas eliminar la descarga de «{{ object.movie.titulo }}»?</p>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Confirmar eliminación</button>
+    <a href="{% url 'descarga_list' %}" class="btn btn-link">Cancelar</a>
+  </form>
+</div>
+{% endblock %}

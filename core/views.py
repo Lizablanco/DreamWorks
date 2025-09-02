@@ -1,7 +1,10 @@
 from django.views.generic import TemplateView
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
+from .models import Curiosidad, Genero, Movie, DescargaUsuarioPelicula
+from .forms  import CuriosidadForm, GeneroForm, MovieForm, DescargaForm
 
+# Create your views here.
 def index(request):
     return render(request, 'core\Index.html')
 
@@ -26,3 +29,230 @@ class CommentView(View):
         return render(request, 'core/modals.html')
     def post(self, request):
         pass
+
+
+# Vistas para CRUD de Curiosidades
+class CuriosidadListView(View):
+    template_name = 'core/curiosidad_list.html'
+
+    def get(self, request):
+        curiosidades = Curiosidad.objects.all().order_by('-id')
+        return render(request, self.template_name, {'curiosidades': curiosidades})
+
+# Vista para crear una nueva curiosidad
+class CuriosidadCreateView(View):
+    template_name = 'core/curiosidad_form.html'
+
+    def get(self, request):
+        form = CuriosidadForm()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = CuriosidadForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('curiosidad_list')
+        return render(request, self.template_name, {'form': form})
+
+# Vista para actualizar una curiosidad existente
+class CuriosidadUpdateView(View):
+    template_name = 'core/curiosidad_form.html'
+
+    def get(self, request, pk):
+        instancia = get_object_or_404(Curiosidad, pk=pk)
+        form = CuriosidadForm(instance=instancia)
+        return render(request, self.template_name, {'form': form, 'object': instancia})
+
+    def post(self, request, pk):
+        instancia = get_object_or_404(Curiosidad, pk=pk)
+        form = CuriosidadForm(request.POST, instance=instancia)
+        if form.is_valid():
+            form.save()
+            return redirect('curiosidad_list')
+        return render(request, self.template_name, {'form': form, 'object': instancia})
+
+# Vista para eliminar una curiosidad
+class CuriosidadDeleteView(View):
+    template_name = 'core/curiosidad_confirm_delete.html'
+
+    def get(self, request, pk):
+        instancia = get_object_or_404(Curiosidad, pk=pk)
+        return render(request, self.template_name, {'object': instancia})
+
+    def post(self, request, pk):
+        instancia = get_object_or_404(Curiosidad, pk=pk)
+        instancia.delete()
+        return redirect('curiosidad_list')
+
+
+# Vistas para CRUD de Generos
+class GeneroListView(View):
+    template_name = 'partials/genero_list.html'
+
+    def get(self, request):
+        generos = Genero.objects.all().order_by('nombre')
+        return render(request, self.template_name, {'generos': generos})
+
+# Vista para crear un nuevo genero
+class GeneroCreateView(View):
+    template_name = 'partials/genero_form.html'
+
+    def get(self, request):
+        form = GeneroForm()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = GeneroForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('genero_list')
+        return render(request, self.template_name, {'form': form})
+
+# Vista para actualizar un genero existente
+class GeneroUpdateView(View):
+    template_name = 'partials/genero_form.html'
+
+    def get(self, request, pk):
+        instancia = get_object_or_404(Genero, pk=pk)
+        form = GeneroForm(instance=instancia)
+        return render(request, self.template_name, {
+            'form': form,
+            'object': instancia
+        })
+
+    def post(self, request, pk):
+        instancia = get_object_or_404(Genero, pk=pk)
+        form = GeneroForm(request.POST, instance=instancia)
+        if form.is_valid():
+            form.save()
+            return redirect('genero_list')
+        return render(request, self.template_name, {
+            'form': form,
+            'object': instancia
+        })
+
+# Vista para eliminar un genero
+class GeneroDeleteView(View):
+    template_name = 'partials/genero_confirm_delete.html'
+
+    def get(self, request, pk):
+        instancia = get_object_or_404(Genero, pk=pk)
+        return render(request, self.template_name, {'object': instancia})
+
+    def post(self, request, pk):
+        instancia = get_object_or_404(Genero, pk=pk)
+        instancia.delete()
+        return redirect('genero_list')
+    
+
+# Vistas para CRUD de Peliculas
+class MovieListView(View):
+    template_name = 'partials/movie_list.html'
+
+    def get(self, request):
+        peliculas = Movie.objects.all().order_by('-fecha_lanzamiento')
+        return render(request, self.template_name, {'peliculas': peliculas})
+
+# Vista para crear una nueva pelicula
+class MovieCreateView(View):
+    template_name = 'partials/movie_form.html'
+
+    def get(self, request):
+        form = MovieForm()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = MovieForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('movie_list')
+        return render(request, self.template_name, {'form': form})
+
+# Vista para actualizar una pelicula existente
+class MovieUpdateView(View):
+    template_name = 'partials/movie_form.html'
+
+    def get(self, request, pk):
+        instancia = get_object_or_404(Movie, pk=pk)
+        form = MovieForm(instance=instancia)
+        return render(request, self.template_name, {
+            'form': form,
+            'object': instancia
+        })
+
+    def post(self, request, pk):
+        instancia = get_object_or_404(Movie, pk=pk)
+        form = MovieForm(request.POST, request.FILES, instance=instancia)
+        if form.is_valid():
+            form.save()
+            return redirect('movie_list')
+        return render(request, self.template_name, {
+            'form': form,
+            'object': instancia
+        })
+
+# Vista para eliminar una pelicula
+class MovieDeleteView(View):
+    template_name = 'partials/movie_confirm_delete.html'
+
+    def get(self, request, pk):
+        instancia = get_object_or_404(Movie, pk=pk)
+        return render(request, self.template_name, {'object': instancia})
+
+    def post(self, request, pk):
+        instancia = get_object_or_404(Movie, pk=pk)
+        instancia.delete()
+        return redirect('movie_list')
+
+
+# Vistas para manejar las descargas de peliculas por usuarios
+class DescargaListView(View):
+    template_name = 'partials/descarga_list.html'
+
+    def get(self, request):
+        # Si es staff, muestro todas las descargas; si no, solo las del usuario
+        if request.user.is_staff:
+            descargas = DescargaUsuarioPelicula.objects.select_related('movie', 'user') \
+                        .order_by('-fecha_descarga')
+        else:
+            descargas = DescargaUsuarioPelicula.objects.filter(user=request.user) \
+                        .select_related('movie') \
+                        .order_by('-fecha_descarga')
+        return render(request, self.template_name, {
+            'descargas': descargas
+        })
+
+# para registrar una nueva descarga
+class DescargaCreateView(View):
+    template_name = 'partials/descarga_form.html'
+
+    def get(self, request):
+        # inyectamos el user para que el form filtre las películas ya descargadas
+        form = DescargaForm(user=request.user)
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = DescargaForm(request.POST, user=request.user)
+        if form.is_valid():
+            descarga = form.save(commit=False)
+            descarga.user = request.user
+            descarga.save()
+            return redirect('descarga_list')
+        return render(request, self.template_name, {'form': form})
+
+# para eliminar una descarga (solo el dueño o staff)
+class DescargaDeleteView(View):
+    template_name = 'partials/descarga_confirm_delete.html'
+
+    def get(self, request, pk):
+        descarga = get_object_or_404(DescargaUsuarioPelicula, pk=pk)
+        # Solo el dueño o staff puede verla
+        if not (request.user.is_staff or descarga.user == request.user):
+            return redirect('descarga_list')
+        return render(request, self.template_name, {'object': descarga})
+
+    def post(self, request, pk):
+        descarga = get_object_or_404(DescargaUsuarioPelicula, pk=pk)
+        if request.user.is_staff or descarga.user == request.user:
+            descarga.delete()
+        return redirect('descarga_list')
