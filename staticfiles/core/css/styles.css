@@ -1,0 +1,758 @@
+
+/* cursor */
+html {
+    cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><text x='0' y='28' font-size='28'>🪄</text></svg>"), auto;
+}
+
+/* logo principal */
+.logo {
+    max-width: 150px;
+    height: 100px;
+    margin: 9px;
+    border-radius: 100px;
+    background-position: left;
+    background-color: transparent;
+    background: linear-gradient(to left, rgb(69, 67, 136));
+}
+
+/*Letra DreamWorks*/
+.dreamworks-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.dreamworks-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.dreamworks-main h1 {
+    font-family: 'UnifrakturMaguntia', cursive;
+    font-size: 5.5rem;
+    letter-spacing: 4px;
+    font-weight: normal;
+    text-align: center;
+
+    /* Efecto de texto luminoso sin sombras oscuras */
+    color: #fff;
+    background: linear-gradient(45deg, #f7ec20, #ffd700, #fffacd, #f7ec20);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: textShine 3s ease-in-out infinite alternate;
+
+    /* Sutil resplandor */
+    text-shadow:
+        0 0 10px rgba(255, 230, 100, 0.4),
+        0 0 20px rgba(255, 220, 80, 0.3),
+        0 0 30px rgba(255, 209, 60, 0.877);
+}
+
+/* Animación para el texto */
+@keyframes textShine {
+    0% {
+        background-position: 0% 50%;
+        text-shadow:
+            0 0 10px rgba(255, 230, 100, 0.4),
+            0 0 20px rgba(255, 220, 80, 0.3);
+    }
+
+    100% {
+        background-position: 100% 50%;
+        text-shadow:
+            0 0 15px rgba(255, 229, 100, 0.938),
+            0 0 25px rgba(255, 220, 80, 0.4),
+            0 0 35px rgba(255, 209, 60, 0.89);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dreamworks-main h1 {
+        font-size: 4rem;
+        letter-spacing: 3px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dreamworks-main h1 {
+        font-size: 3.2rem;
+        letter-spacing: 2px;
+    }
+}
+
+/* Navegador Flotante */
+.menu-medieval {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgb(145, 122, 247);
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    border: 2px solid #e7d000;
+    z-index: 1000;
+}
+
+.menu-lista {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu-lista a,
+.menu-lista label {
+    color: #161206;
+    text-decoration: none;
+    font-family: 'MedievalSharp', cursive;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: transparent;
+    border: none;
+}
+
+.menu-lista a:hover,
+.menu-lista label:hover {
+    text-shadow: 0 0 8px #FFD700;
+}
+
+/* Para forzar los estilos de los registros e inicio de sesion */
+.formulario-registro,
+.formulario-login {
+    position: static !important;
+    display: block !important;
+    float: left;
+    clear: both;
+}
+
+/* Forzado para los estilos*/
+.formulario-registro,
+.formulario-login {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 1001 !important;
+    display: none !important;
+    background: rgb(145, 122, 247) !important;
+    padding: 2rem !important;
+    border: 3px solid #F5E7C1 !important;
+    border-radius: 10px !important;
+    width: 300px !important;
+}
+
+/* Cuando estén activos */
+.formulario-registro[style*="display: block"],
+.formulario-login[style*="display: block"] {
+    display: block !important;
+}
+
+/* Sistema de registro flotante */
+#registro-toggle {
+    display: none;
+}
+
+.formulario-registro {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgb(145, 122, 247);
+    padding: 2rem;
+    border: 3px solid #F5E7C1;
+    border-radius: 10px;
+    z-index: 1001;
+    display: none;
+    width: 300px;
+}
+
+#registro-toggle:checked~.formulario-registro {
+    display: block;
+    animation: aparecer 0.4s ease-out;
+}
+
+@keyframes aparecer {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+/* Estilos de formulario */
+.campo-formulario {
+    margin-bottom: 1rem;
+}
+
+.campo-formulario label {
+    display: block;
+    color: #F5E7C1;
+    margin-bottom: 0.3rem;
+}
+
+.campo-formulario input {
+    width: 100%;
+    padding: 0.5rem;
+    background: rgba(245, 231, 193, 0.9);
+    border: 1px solid #e6d119;
+}
+
+.boton-medieval {
+    background: #473804;
+    color: #fffb26;
+    border: none;
+    padding: 0.5rem 1rem;
+    width: 100%;
+    font-family: 'MedievalSharp', cursive;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.boton-medieval:hover {
+    background: #5C3317;
+}
+
+/* Sistema de inicio de sesión flotante */
+#login-toggle {
+    display: none;
+}
+
+.formulario-login {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgb(145, 122, 247);
+    padding: 2rem;
+    border: 3px solid #F5E7C1;
+    border-radius: 10px;
+    z-index: 1001;
+    display: none;
+    width: 300px;
+}
+
+#login-toggle:checked~.formulario-login {
+    display: block;
+    animation: aparecer 0.4s ease-out;
+}
+
+/* Estilos de formulario */
+.campo-formulario {
+    margin-bottom: 1rem;
+}
+
+.campo-formulario label {
+    display: block;
+    color: #F5E7C1;
+    margin-bottom: 0.3rem;
+}
+
+.campo-formulario input {
+    width: 100%;
+    padding: 0.5rem;
+    background: rgba(245, 231, 193, 0.9);
+    border: 1px solid #e6d119;
+}
+
+.boton-medieval {
+    background: #473804;
+    color: #fffb26;
+    border: none;
+    padding: 0.5rem 1rem;
+    width: 100%;
+    font-family: 'MedievalSharp', cursive;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.boton-medieval:hover {
+    background: #5C3317;
+}
+
+
+/* Sección de comentarios flotante */
+#comentarios {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgb(145, 122, 247);
+    padding: 1rem;
+    border: 2px solid #F5E7C1;
+    border-radius: 10px;
+    width: 250px;
+    z-index: 1000;
+}
+
+#comentarios h3 {
+    color: #F5E7C1;
+    margin-top: 0;
+    border-bottom: 1px solid #F5E7C1;
+    padding-bottom: 0.5rem;
+}
+
+textarea {
+    width: 100%;
+    height: 80px;
+    background: rgba(245, 231, 193, 0.9);
+    border: 1px solid #5C3317;
+    margin-bottom: 0.5rem;
+}
+
+.contador {
+    color: #F5E7C1;
+    font-size: 0.8rem;
+    text-align: right;
+}
+
+/* Grid de películas*/
+.peliculas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 10;
+}
+
+/* Tarjeta de película*/
+.pelicula-card {
+    background: rgba(30, 30, 60, 0.9);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.pelicula-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Contenedor de imagen */
+.image-container {
+    position: relative;
+    width: 100%;
+    height: 350px;
+    overflow: hidden;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+/* Imagen con efectos */
+.pelicula-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: drop-shadow(0 0 10px rgb(0, 153, 255));
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.pelicula-img:hover {
+    transform: scale(1.05);
+}
+
+.pelicula-titulo {
+    color: #ffffff;
+    text-align: center;
+    font-size: 1.8rem;
+    /* Un poco más grande para mejor legibilidad en cursiva */
+    text-shadow: 0 0 5px #ffdd1a, 0 0 10px #ffdd1a;
+    margin: 20px 15px;
+    padding: 0;
+
+    /* Estilo cursiva elegante */
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 700;
+    letter-spacing: 1px;
+
+    /* Efecto de resplandor adicional */
+    animation: glowEffect 3s ease-in-out infinite alternate;
+}
+
+/* Efecto de resplandor suave */
+@keyframes glowEffect {
+    0% {
+        text-shadow: 0 0 5px #ffdd1a, 0 0 10px #ffdd1a;
+    }
+
+    100% {
+        text-shadow: 0 0 8px #ffdd1a, 0 0 15px #ffdd1a, 0 0 20px #ffdd1a88;
+    }
+}
+
+
+/* Información de la película (inicialmente oculta) */
+.pelicula-info {
+    max-width: 100%;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1rem;
+    margin-top: 5px;
+    padding: 15px;
+    background: rgba(84, 8, 224, 0.438);
+    border-radius: 8px;
+    width: calc(100% - 30px);
+    margin: 0 auto 15px;
+    animation: fadeIn 0.5s ease;
+}
+
+.pelicula-info.activo {
+    display: flex;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.pelicula-desc {
+    padding: 10px;
+    border-radius: 8px;
+    margin: 10px 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    line-height: 1.5;
+}
+
+.disponibilidad,
+.pelicula-year {
+    margin: 8px 0;
+    color: #ce93d8;
+    font-style: italic;
+    text-align: center;
+    width: 100%;
+}
+
+.pelicula-year {
+    color: #b39ddb;
+    font-weight: bold;
+}
+
+.enlace-ver {
+    display: inline-block;
+    background: linear-gradient(to right, #f14511, #f59774);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: transform 0.3s;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.enlace-ver:hover {
+    transform: scale(1.05);
+    background: linear-gradient(to right, #34cc61, #9fffcf);
+}
+
+/* Indicador para imágenes clickeables */
+.indicador-click {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 20;
+
+}
+
+.pelicula-card:hover .indicador-click {
+    opacity: 1;
+}
+
+footer {
+    text-align: center;
+    margin-top: 50px;
+    padding: 20px;
+    font-size: 0.9rem;
+    opacity: 0.8;
+    color: #a29bfe;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .peliculas-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    .image-container {
+        height: 300px;
+        border-radius: 8px;
+    }
+
+    .pelicula-titulo {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .peliculas-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .image-container {
+        height: 280px;
+    }
+
+    .pelicula-titulo {
+        font-size: 1.4rem;
+    }
+}
+
+/* Fondo estrellado */
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg,
+            #090929 0%,
+            #3535a3 50%,
+            #180218 100%);
+    background-attachment: fixed;
+    position: relative;
+    overflow-x: hidden;
+}
+
+.stars {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Luna con efecto brillante */
+.moon {
+    position: fixed;
+    top: 20%;
+    right: 15%;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle at 30% 30%,
+            #f9f3cc,
+            #e8d68a 70%);
+    border-radius: 50%;
+    box-shadow: 0 0 50px #f0e6a5;
+    z-index: 1;
+    animation: pulse 4s infinite alternate;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.stars {
+    background-image:
+        radial-gradient(1px 1px at 10% 20%, white, rgba(0, 0, 0, 0)),
+        radial-gradient(1px 1px at 20% 30%, white, rgba(0, 0, 0, 0)),
+        radial-gradient(1px 1px at 30% 40%, white, rgba(0, 0, 0, 0)),
+        radial-gradient(1px 1px at 40% 50%, white, rgba(0, 0, 0, 0)),
+        radial-gradient(1px 1px at 50% 60%, white, rgba(0, 0, 0, 0)),
+        radial-gradient(1px 1px at 60% 70%, white, rgba(0, 0, 0, 0)),
+        radial-gradient(1px 1px at 70% 80%, white, rgba(0, 0, 0, 0)),
+        radial-gradient(1px 1px at 80% 90%, white, rgba(0, 0, 0, 0)),
+        radial-gradient(1px 1px at 90% 10%, white, rgba(0, 0, 0, 0)),
+        radial-gradient(1px 1px at 15% 25%, white, rgba(0, 0, 0, 0)),
+        radial-gradient(1px 1px at 25% 35%, white, rgba(0, 0, 0, 0)),
+        radial-gradient(1px 1px at 35% 45%, white, rgba(0, 0, 0, 0)),
+        radial-gradient(1px 1px at 45% 55%, white, rgba(0, 0, 0, 0)),
+        radial-gradient(1px 1px at 55% 65%, white, rgba(0, 0, 0, 0)),
+        radial-gradient(1px 1px at 65% 75%, white, rgba(0, 0, 0, 0)),
+        radial-gradient(1px 1px at 75% 85%, white, rgba(0, 0, 0, 0)),
+        radial-gradient(1px 1px at 85% 95%, white, rgba(0, 0, 0, 0)),
+        radial-gradient(1px 1px at 95% 15%, white, rgba(0, 0, 0, 0));
+
+    background-size: 200px 200px;
+    animation: starsAnimation 50s linear infinite;
+}
+
+@keyframes starsAnimation {
+    from {
+        background-position: 0 0;
+    }
+
+    to {
+        background-position: -200px 200px;
+    }
+}
+
+/* Estilo base del footer */
+footer {
+    background: linear-gradient(to right, #0a1128, #1a2a57);
+    color: white;
+    font-family: 'Arial', sans-serif;
+    padding: 40px 20px 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Efecto de estrellas*/
+footer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="20" cy="30" r="0.8" fill="white" opacity="0.3"/><circle cx="50" cy="70" r="0.5" fill="white" opacity="0.3"/></svg>');
+    pointer-events: auto;
+}
+
+/* Contenedor principal */
+.footer-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+/* Sección de contacto */
+.contact-section h3 {
+    color: #fae56f;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.contact-section h3::before {
+    content: "📱";
+    margin-right: 10px;
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.contact-item a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.contact-item a:hover {
+    color: #ffd700;
+    text-decoration: underline;
+}
+
+/* Iconos de contacto */
+.contact-icon {
+    font-size: 1.2rem;
+    min-width: 25px;
+    text-align: center;
+}
+
+/* Sección de redes sociales */
+.social-links {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.social-link {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.social-link:hover {
+    background: #ffd700;
+    transform: translateY(-5px);
+}
+
+/* Sección de copyright */
+.copyright {
+    grid-column: 1 / -1;
+    text-align: center;
+    margin-top: 50px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 215, 0, 0.3);
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Efecto de logo DreamWorks */
+.dreamworks-logo {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.dreamworks-logo img {
+    height: 70px;
+    filter: drop-shadow(0 0 5px rgba(21, 156, 247, 0.5));
+}
+
+@media (max-width: 768px) {
+    .footer-container {
+        grid-template-columns: 1fr;
+    }
+
+    .contact-section h3 {
+        justify-content: center;
+    }
+
+    .social-links {
+        justify-content: center;
+    }
+}

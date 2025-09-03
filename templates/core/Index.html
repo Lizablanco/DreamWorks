@@ -22,7 +22,7 @@
             <p class="pelicula-year">2001</p>
             <p class="pelicula-desc">Un ogro gruñón rescata a una princesa en una parodia hilarante de los cuentos de hadas. Ganó el primer Óscar a Mejor Película Animada❤️.</p>
             <p class="disponibilidad">Disponible en: Netflix, Prime Video, Max.</p>
-            <a href="https://dai.ly/x9iiz3s" target="_blank" class="enlace-ver">Ver película 🌟</a>
+            <a href="{% url 'pelicula_info' 'shrek' %}"  target="_blank" class="enlace-ver"> Ver más detalles 🌟</a>
         </div>
     </div>
     
@@ -37,7 +37,8 @@
             <p class="pelicula-year">2010</p>
             <p class="pelicula-desc">Un vikingo y su dragón desafían las tradiciones de su aldea🐉.</p>
             <p class="disponibilidad">Disponible en: SkyShowtime.</p>
-            <a href="https://www.tokyvideo.com/video/como-entrenar-a-tu-dragon-pelicula-en-latino" target="_blank" class="enlace-ver">Ver película 🌟</a>
+            {# Aquí cambiamos el link externo por el interno #}
+        <a href="{% url 'pelicula_info' 'como-entrenar-a-tu-dragon' %}" target="_blank" class="enlace-ver"> Ver más detalles 🌟</a>
         </div>
     </div>
     
@@ -52,7 +53,7 @@
             <p class="pelicula-year">2008</p>
             <p class="pelicula-desc">Po, un panda torpe, se convierte en el Guerrero Dragón🐼.</p>
             <p class="disponibilidad">Disponible en: Netflix, Prime Video.</p>
-            <a href="https://www.tokyvideo.com/es/video/kung-fu-panda-2008-espanol-latino-2" target="_blank" class="enlace-ver">Ver película 🌟</a>
+            <a href="{% url 'pelicula_info' 'Kung-Fu-Panda' %}" target="_blank" class="enlace-ver"> Ver más detalles 🌟</a>
         </div>
     </div>
     
@@ -67,7 +68,7 @@
             <p class="pelicula-year">1998</p>
             <p class="pelicula-desc">Adaptación animada de la historia de Moisés👑.</p>
             <p class="disponibilidad">Disponible en: Movistar Plus+, SkyShowtime.</p>
-            <a href="https://www.tokyvideo.com/es/video/el-principe-de-egipto-pelicula-completa-en-espanol" target="_blank" class="enlace-ver">Ver película 🌟</a>
+            <a href="{% url 'pelicula_info' 'el-principe-de-egipto' %}" target="_blank" class="enlace-ver"> Ver más detalles 🌟</a>
         </div>
     </div>
     
@@ -82,7 +83,7 @@
             <p class="pelicula-year">2004</p>
             <p class="pelicula-desc">Shrek conoce a sus suegros y enfrenta al Gato con Botas🐱👢.</p>
             <p class="disponibilidad">Disponible en: Prime Video, Movistar Plus+.</p>
-            <a href="https://www.tokyvideo.com/es/video/shrek-2-pelicula-completa-espanol-latino" target="_blank" class="enlace-ver">Ver película 🌟</a>
+            <a href="{% url 'pelicula_info' 'shrek-2' %}" target="_blank" class="enlace-ver"> Ver más detalles 🌟</a>
         </div>
     </div>
     
@@ -97,7 +98,7 @@
             <p class="pelicula-year">2012</p>
             <p class="pelicula-desc">Figuras míticas (Santa, Conejo de Pascua) protegen a los niños🌟.</p>
             <p class="disponibilidad">Disponible en: Prime Video.</p>
-            <a href="https://www.tokyvideo.com/es/video/el-origen-de-los-guardianes-6" target="_blank" class="enlace-ver">Ver película 🌟</a>
+            <a href="{% url 'pelicula_info' 'el-origen-de-los-guardianes' %}" target="_blank" class="enlace-ver"> Ver más detalles 🌟</a>
         </div>
     </div>
 
@@ -112,7 +113,7 @@
             <p class="pelicula-year">2005</p>
             <p class="pelicula-desc">Stop-motion sobre un inventor y su perro contra un misterioso villano🧀🐕.</p>
             <p class="disponibilidad">Disponible en: Prime Video.</p>
-            <a href="https://www.tokyvideo.com/video/wallace-e-gromit-a-batalha-dos-vegetais-pud1nn" target="_blank" class="enlace-ver">Ver película 🌟</a>
+            <a href="{% url 'pelicula_info' 'wallace-gromit' %}" target="_blank" class="enlace-ver"> Ver más detalles 🌟</a>
         </div>
     </div>
 
@@ -127,7 +128,7 @@
             <p class="pelicula-year">2000</p>
             <p class="pelicula-desc">Stop-motion, parodia de películas de guerra y humor inteligente🐥.</p>
             <p class="disponibilidad">Disponible en: Apple TV (alquiler).</p>
-            <a href="https://www.tokyvideo.com/video/gigi-pollitos-en-fuga" target="_blank" class="enlace-ver">Ver película 🌟</a>
+            <a href="{% url 'pelicula_info' 'pollitos-en-fuga' %}" target="_blank" class="enlace-ver"> Ver más detalles 🌟</a>
         </div>
     </div>
 
@@ -142,7 +143,7 @@
             <p class="pelicula-year">2022</p>
             <p class="pelicula-desc">El Gato busca recuperar sus vidas perdidas 🐱⚔️.</p>
             <p class="disponibilidad">Disponible en: Prime Video.</p>
-            <a href="https://www.tokyvideo.com/es/video/el-gato-con-botas-el-ultimo-deseo-pelicula-completa-en-espanol-latino" target="_blank" class="enlace-ver">Ver película 🌟</a>
+            <a href="{% url 'pelicula_info' 'el-gato-con-botas-2' %}" target="_blank" class="enlace-ver"> Ver más detalles 🌟</a>
         </div>
     </div>
 
@@ -157,7 +158,7 @@
             <p class="pelicula-year">2005</p>
             <p class="pelicula-desc">Animales del zoológico terminan en la selva🦁🐧.</p>
             <p class="disponibilidad">Disponible en: Netflix, Prime Video.</p>
-            <a href="https://www.tokyvideo.com/es/video/madagascar-4" target="_blank" class="enlace-ver">Ver película 🌟</a>
+            <a href="{% url 'pelicula_info' 'madagascar' %}" target="_blank" class="enlace-ver"> Ver más detalles 🌟</a>
         </div>
     </div>
 
@@ -172,7 +173,7 @@
             <p class="pelicula-year">2000</p>
             <p class="pelicula-desc">Dos timadores buscan la ciudad perdida🌟</p>
             <p class="disponibilidad">Disponible en: Apple TV, Prime Video.</p>
-            <a href="https://www.tokyvideo.com/es/video/el-camino-hacia-el-dorado" target="_blank" class="enlace-ver">Ver película 🌟</a>
+            <a href="{% url 'pelicula_info' 'la-ruta-hacia-el-dorado' %}" target="_blank" class="enlace-ver"> Ver más detalles 🌟</a>
         </div>
     </div>
 
@@ -187,7 +188,7 @@
             <p class="pelicula-year">2024</p>
             <p class="pelicula-desc">Un robot aprende a convivir con animales en la naturaleza.</p>
             <p class="disponibilidad">Disponible en: Cines (próximamente en streaming).</p>
-            <a href="https://www.tokyvideo.com/es/video/robot-salvaje-2024-pelicula-completa-espanol-latino" target="_blank" class="enlace-ver">Ver película 🌟</a>
+            <a href="{% url 'pelicula_info' 'robot-salvaje' %}" target="_blank" class="enlace-ver"> Ver más detalles 🌟</a>
         </div>
     </div>
 </div>

@@ -1,9 +1,124 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ pelicula.titulo }} - Detalles{% endblock %}
 {% block content %}
 <div class="container py-4">
-    <h1>Panel de Películas</h1>
-    {% include 'partials/movie_form.html' %}
-    <hr>
-    {% include 'partials/movie_list.html' %}
+
+  {# Título y datos básicos #}
+  <h1>{{ pelicula.titulo }} ({{ pelicula.fecha_lanzamiento.year }})</h1>
+  <div class="row mb-4">
+    <div class="col-md-4">
+      {% if pelicula.poster %}
+        <img src="{{ pelicula.poster.url }}"
+             alt="Póster de {{ pelicula.titulo }}"
+             class="img-fluid rounded">
+      {% else %}
+        <p class="text-muted">No hay póster disponible.</p>
+      {% endif %}
+    </div>
+    <div class="col-md-8">
+      {% if pelicula.descripcion %}
+        <p>{{ pelicula.descripcion }}</p>
+      {% else %}
+        <p class="text-muted">Sin descripción disponible.</p>
+      {% endif %}
+
+      {% if pelicula.duracion %}
+        <p><strong>Duración:</strong> {{ pelicula.duracion }} minutos</p>
+      {% else %}
+        <p class="text-muted">Duración no especificada.</p>
+      {% endif %}
+
+      {% if pelicula.autores %}
+        <p><strong>Autores/Estudio:</strong> {{ pelicula.autores }}</p>
+      {% else %}
+        <p class="text-muted">Autor o estudio no registrado.</p>
+      {% endif %}
+
+      {# Botón de descarga o enlace externo #}
+      {% if pelicula.archivo %}
+        <a href="{{ pelicula.archivo.url }}" class="btn btn-success" download>
+          Descargar película
+        </a>
+      {% elif pelicula.enlace_externo %}
+        <a href="{{ pelicula.enlace_externo }}" class="btn btn-warning" target="_blank">
+          Ver película en línea
+        </a>
+      {% else %}
+        <p class="text-muted">No hay contenido disponible.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <hr>
+
+  {# Sección de géneros #}
+<h2>Géneros</h2>
+<ul>
+  {% for genero in pelicula.generos.all %}
+    <li>
+      <strong>{{ genero.nombre }}</strong><br>
+      <small class="text-muted">{{ genero.descripcion }}</small>
+    </li>
+  {% empty %}
+    <li class="text-muted">Sin géneros asignados.</li>
+  {% endfor %}
+</ul>
+
+  <hr>
+
+  {# Sección de curiosidades #}
+  <h2>Curiosidades</h2>
+  <ul class="mb-4">
+    {% for curiosidad in pelicula.curiosidades.all %}
+      <li>
+        <strong>{{ curiosidad.titulo }}</strong>: {{ curiosidad.descripcion }}
+      </li>
+    {% empty %}
+      <li class="text-muted">No hay curiosidades registradas.</li>
+    {% endfor %}
+  </ul>
+
+  <hr>
+
+  {# Sección de descargas #}
+  <h2>Descargas</h2>
+  <ul class="mb-4">
+    {% for descarga in pelicula.descargas.all %}
+      <li>
+        {{ descarga.user.username }}
+        <small class="text-muted">
+          – {{ descarga.fecha_descarga|date:"d M Y H:i" }}
+        </small>
+      </li>
+    {% empty %}
+      <li class="text-muted">No se han registrado descargas.</li>
+    {% endfor %}
+  </ul>
+
+  <p>
+    <a href="{% url 'pelicula_descargar' pelicula.slug %}" class="btn btn-success">
+      Descargar película
+    </a>
+    <a href="{% url 'index' %}" class="btn btn-link">
+      &larr; Volver al listado
+    </a>
+  </p>
+  {# Alternativa simple sin historial de descargas #}
+  {% if pelicula.archivo %}
+  <a href="{% url 'pelicula_descargar' pelicula.slug %}" class="btn btn-success">
+    Descargar película
+  </a>
+{% elif pelicula.enlace_externo %}
+  <a href="{{ pelicula.enlace_externo }}" class="btn btn-warning" target="_blank">
+    Ver película en línea
+  </a>
+{% else %}
+  <p class="text-muted">No hay contenido disponible.</p>
+{% endif %}
+
+
+
 </div>
 {% endblock %}

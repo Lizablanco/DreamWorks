@@ -1,5 +1,12 @@
+from django.conf import settings
+from django.http import HttpResponse, FileResponse, Http404
+import os
+from django.contrib import messages
+from django.core.exceptions import ValidationError
 from django.views.generic import TemplateView
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.views import View
 from .models import Curiosidad, Genero, Movie, DescargaUsuarioPelicula
 from .forms  import CuriosidadForm, GeneroForm, MovieForm, DescargaForm
@@ -7,6 +14,14 @@ from .forms  import CuriosidadForm, GeneroForm, MovieForm, DescargaForm
 # Create your views here.
 def index(request):
     return render(request, 'core\Index.html')
+
+# vista para manejar cuando el archivo no esta disponible
+def archivo_no_disponible(request, slug):
+    pelicula = get_object_or_404(Movie, slug=slug)
+    return render(request, 'partials/archivo_no_disponible.html', {'pelicula': pelicula})
+
+
+
 
 ###codigo de prueba
 ## Vista basada en clase para manejar el registro
@@ -204,6 +219,29 @@ class MovieDeleteView(View):
         instancia.delete()
         return redirect('movie_list')
 
+# Vista para mostrar la informacion y detalles de una pelicula
+class PeliculaInfoView(View):
+    template_name = 'core/peliculas_info.html'
+    def get(self, request, slug):
+        pelicula = get_object_or_404(
+            Movie.objects.prefetch_related('generos', 'curiosidades', 'descargas'),
+            slug=slug
+        )
+        return render(request, self.template_name, {
+        'pelicula': pelicula
+        })
+
+
+# Vista para la pagina principal que muestra las peliculas mas recientes
+class IndexView(View):
+    template_name = 'core/index.html'
+
+    def get(self, request):
+        peliculas = Movie.objects.all().order_by('-fecha_lanzamiento')
+        return render(request, self.template_name, {
+            'peliculas': peliculas
+        })
+
 
 # Vistas para manejar las descargas de peliculas por usuarios
 class DescargaListView(View):
@@ -221,6 +259,21 @@ class DescargaListView(View):
         return render(request, self.template_name, {
             'descargas': descargas
         })
+
+# Vista para manejar la descarga real del archivo
+@login_required
+def pelicula_descargar(request, slug):
+    pelicula = get_object_or_404(Movie, slug=slug)
+
+    if not pelicula.archivo or not os.path.isfile(pelicula.archivo.path):
+        messages.warning(request, "Esta película no tiene archivo disponible para descarga.")
+        return redirect(pelicula.get_absolute_url())
+
+    return FileResponse(pelicula.archivo.open(), as_attachment=True, filename=os.path.basename(pelicula.archivo.name))
+
+
+
+
 
 # para registrar una nueva descarga
 class DescargaCreateView(View):
@@ -256,3 +309,22 @@ class DescargaDeleteView(View):
         if request.user.is_staff or descarga.user == request.user:
             descarga.delete()
         return redirect('descarga_list')
+
+# vista para manejar la descarga real del archivo
+@method_decorator(login_required, name='dispatch')
+class PeliculaDescargaView(View):
+    def get(self, request, slug):
+        pelicula = get_object_or_404(Movie, slug=slug)
+
+        # Registrar la descarga
+        DescargaUsuarioPelicula.objects.get_or_create(
+            user=request.user,
+            movie=pelicula
+        )
+
+        # Verificar si el archivo existe
+        if not pelicula.archivo or not os.path.isfile(pelicula.archivo.path):
+            return redirect('archivo_no_disponible', slug=pelicula.slug)
+
+        # Redirigir al archivo si existe
+        return redirect(pelicula.archivo.url)

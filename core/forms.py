@@ -69,6 +69,40 @@ class MovieForm(forms.ModelForm):
             'duracion': forms.NumberInput(attrs={'class':'form-control'}),
             'autores': forms.TextInput(attrs={'class':'form-control'}),
         }
+        error_messages = {
+            'titulo': {
+                'required': 'El título es obligatorio.',
+                'max_length': 'Máximo 150 caracteres.',
+            },
+            'descripcion': {
+                'required': 'La descripción no puede quedar vacía.',
+            },
+            'fecha_lanzamiento': {
+                'required': 'La fecha de lanzamiento es obligatoria.',
+                'invalid': 'Formato de fecha inválido. Usa AAAA-MM-DD.',
+            },
+            'duracion': {
+                'required': 'La duración es obligatoria.',
+                'invalid': 'Introduce un número válido para la duración.',
+            },
+            'archivo': {
+                'required': 'Debes subir el archivo de la película.',
+                'invalid': 'Archivo inválido. Asegúrate de que sea un archivo correcto.',
+            },
+            'poster': {
+                'required': 'Debes subir una imagen para el póster.',
+                'invalid': 'Imagen inválida. Asegúrate de que sea un archivo de imagen correcto.',
+            },
+            'autores': {
+                'required': 'El campo autores es obligatorio.',
+                'max_length': 'Máximo 250 caracteres.',
+            },
+        }
+    def clean_titulo(self):
+        titulo = self.cleaned_data['titulo']
+        if Movie.objects.filter(titulo=titulo).exists():
+            raise forms.ValidationError("Ya existe una película con ese título.")
+        return titulo
 
 # Formulario para que un usuario registre la descarga de una película
 class DescargaForm(forms.ModelForm):

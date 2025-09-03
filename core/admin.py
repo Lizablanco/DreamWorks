@@ -44,25 +44,27 @@ class MovieCuriosidadInline(admin.TabularInline):
 #
 @admin.register(Movie)
 class MovieAdmin(admin.ModelAdmin):
-    list_display       = ('titulo', 'fecha_lanzamiento', 'duracion', 'autores')
-    list_filter        = ('fecha_lanzamiento', 'generos')
-    search_fields      = ('titulo', 'autores')
-    filter_horizontal  = ('generos',)
-    inlines            = [MovieCuriosidadInline]
+    list_display = ('titulo', 'fecha_lanzamiento', 'slug')
+    prepopulated_fields = {'slug': ('titulo',)}
+    search_fields = ('titulo',)
+    filter_horizontal = ('generos',)
+    inlines = [MovieCuriosidadInline]
+    
+    def vista_poster(self, obj):
+        if obj.poster:
+            return format_html('<img src="{}" width="80" />', obj.poster.url)
+        return "Sin imagen"
+    vista_poster.short_description = "Póster"
+    readonly_fields = ('vista_poster',)
     fieldsets = (
-        (None, {
-            'fields': (
-                'titulo', 'descripcion', 'autores',
-                ('fecha_lanzamiento', 'duracion'),
-            )
-        }),
-        ('Archivos', {
-            'fields': ('poster', 'archivo')
-        }),
-        ('Géneros', {
-            'fields': ('generos',)
-        }),
-    )
+    (None, {
+        'fields': (
+            'titulo', 'descripcion', 'fecha_lanzamiento', 'duracion',
+            'archivo', 'enlace_externo', 'poster', 'vista_poster',
+            'autores', 'generos', 'slug'
+        )
+    }),
+)
 
 
 #
@@ -76,3 +78,4 @@ class DescargaUsuarioPeliculaAdmin(admin.ModelAdmin):
     date_hierarchy     = 'fecha_descarga'
     raw_id_fields      = ('user', 'movie')
     list_select_related = ('user', 'movie')
+

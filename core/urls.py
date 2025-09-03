@@ -3,7 +3,8 @@ from django.urls import path, include
 from django.conf.urls.static import static  
 from django.conf import settings
 from . import views
-from .views import (CuriosidadListView, CuriosidadCreateView, CuriosidadUpdateView, CuriosidadDeleteView, GeneroListView, GeneroCreateView, GeneroUpdateView, GeneroDeleteView, MovieListView, MovieCreateView, MovieUpdateView, MovieDeleteView, DescargaListView, DescargaCreateView, DescargaDeleteView, )
+from .views import ( IndexView, CuriosidadListView, CuriosidadCreateView, CuriosidadUpdateView, CuriosidadDeleteView, GeneroListView, GeneroCreateView, GeneroUpdateView, GeneroDeleteView, MovieListView, MovieCreateView, MovieUpdateView, MovieDeleteView, DescargaListView, DescargaCreateView, DescargaDeleteView, PeliculaInfoView, PeliculaDescargaView,
+MovieUpdateView, archivo_no_disponible )
 
 urlpatterns = [
     # Incluye las URLs de autenticación de Django
@@ -13,7 +14,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     
     #url para la pagina principal
-    path('', views.index, name='index'),
+    path('', IndexView.as_view(), name='index'),
     
     #urls para register
     path('register/', views.RegisterView.as_view(), name='register'),
@@ -46,8 +47,18 @@ urlpatterns = [
     path('descargas/',               DescargaListView.as_view(),   name='descarga_list'),
     path('descargas/nueva/',         DescargaCreateView.as_view(), name='descarga_nueva'),
     path('descargas/<int:pk>/borrar/', DescargaDeleteView.as_view(), name='descarga_borrar'),
+    
+    # urls para manejar informacion y detalles de las peliculas
+    path('pelicula/<slug:slug>/',      PeliculaInfoView.as_view(),  name='pelicula_info'),
+    path('pelicula/<slug:slug>/descargar/', PeliculaDescargaView.as_view(), name='pelicula_descargar'),
+    path('pelicula/<int:pk>/editar/',  MovieUpdateView.as_view(),   name='movie_edit'),
+    
+    # url para manejar cuando el archivo no esta disponible
+    path('DreamWorks/pelicula/<slug:slug>/archivo-no-disponible/', archivo_no_disponible, name='archivo_no_disponible'),
+    
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Configuración para servir archivos media durante el desarrollo
 
 
 

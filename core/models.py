@@ -59,11 +59,12 @@ class Genero(models.Model):
 # ----------------------------------------------------------------------------------
 
 class Movie(models.Model):
-    titulo            = models.CharField(max_length=150)
+    titulo            = models.CharField(max_length=150, blank=False)
     descripcion       = models.TextField()
     fecha_lanzamiento = models.DateField()
-    duracion          = models.IntegerField(help_text="Duración en minutos")
-    archivo           = models.FileField(upload_to='movies/')
+    duracion          = models.IntegerField(help_text="Duración en minutos", blank=False)
+    archivo = models.FileField(upload_to='movies/', blank=True, null=True)
+    enlace_externo = models.URLField(blank=True, null=True)
     poster            = models.ImageField(upload_to='posters/')
     autores           = models.CharField(max_length=250, help_text="Lista de autores o estudio")
     generos           = models.ManyToManyField('Genero', related_name='peliculas')
@@ -91,6 +92,11 @@ class Movie(models.Model):
             self.slug = slug
 
         super().save(*args, **kwargs)
+    def clean(self):
+        if not self.archivo and not self.enlace_externo:
+            raise ValidationError("Debes subir un archivo o proporcionar un enlace externo.")
+        if self.archivo and self.enlace_externo:
+            raise ValidationError("No puedes proporcionar ambos: archivo y enlace externo.")
 
     def __str__(self):
         return self.titulo

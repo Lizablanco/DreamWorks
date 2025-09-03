@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}Archivo no disponible{% endblock %}
+
+{% block content %}
+  <div class="container py-5 text-center">
+    <h2 class="text-danger">Archivo no disponible</h2>
+    <p>La película <strong>{{ pelicula.titulo }}</strong> no tiene un archivo disponible para descarga.</p>
+    <a href="{{ pelicula.get_absolute_url }}" class="btn btn-primary">Volver a la ficha de la película</a>
+  </div>
+{% endblock %}
