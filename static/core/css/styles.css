@@ -1,4 +1,3 @@
-
 /* cursor */
 html {
     cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><text x='0' y='28' font-size='28'>🪄</text></svg>"), auto;
@@ -491,6 +490,252 @@ textarea {
     opacity: 1;
 }
 
+/* efectos de peliculas_info */
+/* Efectos de imagenes */
+.card-img-top:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Tipografía medieval para títulos y párrafos */
+h1,
+h2,
+h3 {
+    font-family: 'UnifrakturMaguntia', cursive;
+    color: #f7ec20;
+    text-shadow: 0 0 10px #e9f08e, 0 0 20px #f7ec20;
+}
+
+p {
+    font-family: 'MedievalSharp', cursive;
+    font-size: 1.1rem;
+    color: #F5E7C1;
+}
+
+/* Efecto brillante en imágenes genéricas */
+.img-fluid {
+    border: 3px solid #f7ec20;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgb(250, 245, 146);
+    transition: transform 0.3s ease-in-out;
+}
+
+.img-fluid:hover {
+    transform: scale(1.05);
+}
+
+/* Contenedor principal: flex que centra todo */
+.detalle-pelicula {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 2rem;
+    padding: 2rem 0;
+}
+
+@media (min-width: 768px) {
+    .detalle-pelicula {
+        flex-direction: row;
+        justify-content: center;
+        text-align: left;
+    }
+}
+
+/* Contraste de texto dentro de info-frame */
+.info-frame strong,
+.info-frame h2,
+.info-frame p,
+.info-frame li {
+    font-style: italic;
+    color: #ffffff;
+    text-shadow: 0 0 5px #ffee00;
+    margin-bottom: 1rem;
+}
+
+/* Marco y sombra para la sección de información */
+.info-frame {
+    background-color: #2a2a2a;
+    border: 2px solid #f7ec20;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 20px rgba(247, 236, 32, 0.4);
+    padding: 1rem;
+    margin-bottom: 2rem;
+}
+
+
+/* Contenedor del póster */
+.poster-container {
+    flex: 0 0 auto;
+}
+
+/* Aumentar tamaño del póster y darle marco */
+.poster-container img {
+    width: 100%;
+    max-width: 300px;
+    border: 4px solid #f7ec20;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 30px rgba(247, 236, 32, 0.6);
+    transition: transform 0.3s ease-in-out;
+}
+
+.poster-container img:hover {
+    transform: scale(1.05);
+}
+
+/* Contenedor de información */
+.info-container {
+    flex: 1 1 auto;
+    max-width: 600px;
+}
+
+/* Título principal dentro de info-container */
+.info-container h1 {
+    font-family: 'UnifrakturMaguntia', cursive;
+    color: #f7ec20;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 10px #000, 0 0 20px #f7ec20;
+}
+
+/* Párrafos descriptivos en info-container */
+.info-container p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+/* Estilos de botones en info-container */
+.info-container .btn {
+    margin-right: 0.75rem;
+    margin-top: 1rem;
+    padding: 0.5rem 1.25rem;
+    font-weight: bold;
+}
+
+.info-container .btn-success {
+    background-color: #28a745;
+    border: none;
+}
+
+.info-container .btn-warning {
+    background-color: #ffc107;
+    border: none;
+}
+
+.info-container .btn-link {
+    color: #a6e70e;
+    text-decoration: none;
+}
+
+/* Secciones dentro de info-container */
+.info-container h2 {
+    font-size: 1.75rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: #f7ec20;
+}
+
+.info-container ul {
+    list-style: none;
+    padding: 0;
+}
+
+.info-container ul li {
+    margin-bottom: 0.5rem;
+}
+
+/* Texto en modo ‘vacío’ */
+.info-container .text-muted {
+    color: #888 !important;
+}
+
+/* Botón de descarga: efecto hover y “ripple” al hacer click */
+.btn-download {
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-download:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgb(7, 109, 30);
+}
+
+/* Ripple effect puro CSS */
+.btn-download::after {
+    content: "";
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: rgb(157, 253, 144);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.6s ease-out, opacity 0.6s ease-out;
+    opacity: 0;
+}
+
+.btn-download:active::after {
+    transform: translate(-50%, -50%) scale(10);
+    opacity: 1;
+    transition: 0s;
+}
+
+/* Botón de volver: cambio de color y subrayado */
+.btn-back {
+    transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.btn-back:hover {
+    color: #fff650;
+    text-decoration: underline;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.856);
+}
+
+/* Botón de opinión personalizado */
+.btn-opinion {
+    background-color: #6c5ce7;
+    /* púrpura brillante */
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1.25rem;
+    font-weight: bold;
+    font-style: italic;
+    box-shadow: 0 0 10px rgba(91, 255, 165, 0.897);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Efecto al pasar el mouse */
+.btn-opinion:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(138, 248, 138, 0.849);
+}
+
+/* Efecto al hacer clic */
+.btn-opinion:active {
+    transform: scale(0.98);
+    box-shadow: 0 0 5px rgba(67, 253, 166, 0.932);
+}
+
+.btn-opinion {
+    opacity: 0;
+    animation: fadeIn 1s ease forwards;
+    animation-delay: 0.3s;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+
+
+
+/* Estilo del footer */
 footer {
     text-align: center;
     margin-top: 50px;

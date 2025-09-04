@@ -65,7 +65,7 @@ class Movie(models.Model):
     duracion          = models.IntegerField(help_text="Duración en minutos", blank=False)
     archivo = models.FileField(upload_to='movies/', blank=True, null=True)
     enlace_externo = models.URLField(blank=True, null=True)
-    poster            = models.ImageField(upload_to='posters/')
+    poster            = models.ImageField(upload_to='posters/', blank=True, null=True)
     autores           = models.CharField(max_length=250, help_text="Lista de autores o estudio")
     generos           = models.ManyToManyField('Genero', related_name='peliculas')
     curiosidades      = models.ManyToManyField('Curiosidad', through='MovieCuriosidad', related_name='peliculas')

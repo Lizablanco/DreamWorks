@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.http import HttpResponse, FileResponse, Http404
 import os
+from django.http import FileResponse
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.views.generic import TemplateView
@@ -8,7 +9,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views import View
-from .models import Curiosidad, Genero, Movie, DescargaUsuarioPelicula
+from .models import Curiosidad, Genero, Movie, DescargaUsuarioPelicula, Opinion
 from .forms  import CuriosidadForm, GeneroForm, MovieForm, DescargaForm
 
 # Create your views here.
@@ -222,13 +223,20 @@ class MovieDeleteView(View):
 # Vista para mostrar la informacion y detalles de una pelicula
 class PeliculaInfoView(View):
     template_name = 'core/peliculas_info.html'
+
     def get(self, request, slug):
         pelicula = get_object_or_404(
             Movie.objects.prefetch_related('generos', 'curiosidades', 'descargas'),
             slug=slug
         )
+
+        ya_opino = False
+        if request.user.is_authenticated:
+            ya_opino = Opinion.objects.filter(user=request.user, movie=pelicula).exists()
+
         return render(request, self.template_name, {
-        'pelicula': pelicula
+            'pelicula': pelicula,
+            'ya_opino': ya_opino
         })
 
 
@@ -266,14 +274,9 @@ def pelicula_descargar(request, slug):
     pelicula = get_object_or_404(Movie, slug=slug)
 
     if not pelicula.archivo or not os.path.isfile(pelicula.archivo.path):
-        messages.warning(request, "Esta película no tiene archivo disponible para descarga.")
         return redirect(pelicula.get_absolute_url())
 
     return FileResponse(pelicula.archivo.open(), as_attachment=True, filename=os.path.basename(pelicula.archivo.name))
-
-
-
-
 
 # para registrar una nueva descarga
 class DescargaCreateView(View):
@@ -316,15 +319,19 @@ class PeliculaDescargaView(View):
     def get(self, request, slug):
         pelicula = get_object_or_404(Movie, slug=slug)
 
-        # Registrar la descarga
-        DescargaUsuarioPelicula.objects.get_or_create(
-            user=request.user,
-            movie=pelicula
-        )
-
-        # Verificar si el archivo existe
+        # Verificar si el archivo existe físicamente
         if not pelicula.archivo or not os.path.isfile(pelicula.archivo.path):
+            messages.warning(request, "Esta película no tiene archivo disponible para descarga.")
             return redirect('archivo_no_disponible', slug=pelicula.slug)
 
-        # Redirigir al archivo si existe
-        return redirect(pelicula.archivo.url)
+        # Registrar la descarga solo si no existe
+        if not DescargaUsuarioPelicula.objects.filter(user=request.user, movie=pelicula).exists():
+            DescargaUsuarioPelicula.objects.create(user=request.user, movie=pelicula)
+
+        # Entregar el archivo como descarga directa
+        return FileResponse(
+            pelicula.archivo.open(),
+            as_attachment=True,
+            filename=os.path.basename(pelicula.archivo.name)
+        )
+
