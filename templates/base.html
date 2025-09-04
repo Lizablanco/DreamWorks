@@ -55,6 +55,8 @@
     </style>
 </head>
 <body>
+
+
     {% include 'partials/header.html' %}
     
     <main>
@@ -84,6 +86,7 @@
     
     <!-- Script para animaciones de fondo -->
     <script>
+        
     // Función para mostrar/ocultar información de películas
     function mostrarContenido(id) {
         const todosInfos = document.querySelectorAll('.pelicula-info');
@@ -219,6 +222,7 @@
             });
         }
     });
+    
     </script>
     
     {% block extra_js %}
