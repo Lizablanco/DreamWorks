@@ -1,12 +1,16 @@
 from django.utils.html import format_html # para previsualizar imágenes en el admin
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User, Curiosidad, Movie, Genero, MovieCuriosidad, DescargaUsuarioPelicula
+from .models import User, Curiosidad, Movie, Genero, MovieCuriosidad, DescargaUsuarioPelicula, OpinionGeneral
+
 
 # Register your models here.
 
 # Registro del modelo User personalizado
 admin.site.register(User, UserAdmin)
+
+# Registro del modelo OpinionGeneral
+admin.site.register(OpinionGeneral)
 
 #
 # 1. Género

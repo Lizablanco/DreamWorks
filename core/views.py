@@ -9,17 +9,36 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views import View
-from .models import Curiosidad, Genero, Movie, DescargaUsuarioPelicula, Opinion
+from .models import Curiosidad, Genero, Movie, DescargaUsuarioPelicula, Opinion, OpinionGeneral
 from .forms  import CuriosidadForm, GeneroForm, MovieForm, DescargaForm
 
 # Create your views here.
+
 def index(request):
-    return render(request, 'core\Index.html')
+    opiniones_generales = OpinionGeneral.objects.order_by('-fecha_registro')[:5]
+    return render(request, 'core/index.html', {
+        'opiniones_generales': opiniones_generales
+    })
+
 
 # vista para manejar cuando el archivo no esta disponible
 def archivo_no_disponible(request, slug):
     pelicula = get_object_or_404(Movie, slug=slug)
     return render(request, 'partials/archivo_no_disponible.html', {'pelicula': pelicula})
+
+# vista para guardar la opinion general
+@login_required
+def guardar_opinion_general(request):
+    if request.method == 'POST':
+        descripcion = request.POST.get('descripcion', '').strip()
+        if descripcion:
+            OpinionGeneral.objects.create(
+                user=request.user,
+                descripcion=descripcion
+            )
+    return redirect('index')
+
+
 
 
 

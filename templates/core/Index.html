@@ -225,4 +225,19 @@
         </div>
     </div>
 </div>
+{% include 'partials/modals.html' %}
+
+<section class="opiniones-generales">
+  <h4>🗣️ Lo que dicen los visitantes del Reino</h4>
+  {% for opinion in opiniones_generales %}
+    <blockquote>
+      “{{ opinion.descripcion }}”<br>
+      <small>— {{ opinion.user.username }}</small>
+    </blockquote>
+  {% empty %}
+    <p class="text-muted">Sé el primero en dejar tu opinión sobre el Reino ✨</p>
+  {% endfor %}
+</section>
+
+
 {% endblock %}

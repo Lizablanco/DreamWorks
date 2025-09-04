@@ -133,6 +133,24 @@ class Opinion(models.Model):
         return f"Opinión de {self.user.username} sobre {self.movie.titulo}"
 
 # ----------------------------------------------------------------------------------
+# Opinión General
+# ----------------------------------------------------------------------------------
+class OpinionGeneral(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='opiniones_generales'
+    )
+    descripcion = models.TextField(max_length=250)
+    fecha_registro = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Opinión General'
+        verbose_name_plural = 'Opiniones Generales'
+
+    def __str__(self):
+        return f"Opinión de {self.user.username} sobre la página"
+# ----------------------------------------------------------------------------------
 # Curiosidades
 # ----------------------------------------------------------------------------------
 class Curiosidad(models.Model):
