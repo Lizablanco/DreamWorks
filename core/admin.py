@@ -1,7 +1,7 @@
 from django.utils.html import format_html # para previsualizar imágenes en el admin
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User, Curiosidad, Movie, Genero, MovieCuriosidad, DescargaUsuarioPelicula, OpinionGeneral
+from .models import User, Curiosidad, Movie, Genero, MovieCuriosidad, DescargaUsuarioPelicula, OpinionGeneral, Opinion
 
 
 # Register your models here.
@@ -83,3 +83,14 @@ class DescargaUsuarioPeliculaAdmin(admin.ModelAdmin):
     raw_id_fields      = ('user', 'movie')
     list_select_related = ('user', 'movie')
 
+#
+#6. opiniones de usuarios
+#
+
+@admin.register(Opinion)
+class OpinionAdmin(admin.ModelAdmin):
+    list_display = ('user', 'movie', 'descripcion', 'fecha_registro')
+    list_filter = ('movie', 'fecha_registro')
+    search_fields = ('user__username', 'movie__titulo', 'descripcion')
+    ordering = ('-fecha_registro',)
+    raw_id_fields = ('user', 'movie')
