@@ -52,6 +52,7 @@ class RegisterView(View):
 class LoginView(View):
     def get(self, request):
         return render(request, 'core/modals.html')
+    
     def post(self, request):
         pass
 
@@ -232,7 +233,7 @@ class MovieUpdateView(View):
 
 # Vista para eliminar una pelicula
 class MovieDeleteView(View):
-    template_name = 'partials/movie_confirm_delete.html'
+    template_name = 'partials\movie_confirm_delet.html'
 
     def get(self, request, pk):
         instancia = get_object_or_404(Movie, pk=pk)
