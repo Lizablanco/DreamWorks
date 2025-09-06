@@ -4,38 +4,24 @@
 <div class="container py-4">
   <h1>Descargar película</h1>
 
-  <form method="post">
-    {% csrf_token %}
-    {{ form.non_field_errors }}
-
-    <div class="mb-3">
-      {{ form.movie.label_tag }}
-      {{ form.movie }}
-      {{ form.movie.errors }}
+  {% if form.movie.field.queryset.count == 0 %}
+    <div class="alert alert-warning mt-3">
+      Ya descargaste todas las películas disponibles.
     </div>
+  {% else %}
+    <form method="post">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
 
-    <button type="submit" class="btn btn-primary">Descargar</button>
-    <a href="{% url 'descarga_list' %}" class="btn btn-link">Cancelar</a>
-  </form>
-</div>
-{% endblock %}{% extends 'base.html' %}
+      <div class="mb-3">
+        {{ form.movie.label_tag }}
+        {{ form.movie }}
+        {{ form.movie.errors }}
+      </div>
 
-{% block content %}
-<div class="container py-4">
-  <h1>Descargar película</h1>
-
-  <form method="post">
-    {% csrf_token %}
-    {{ form.non_field_errors }}
-
-    <div class="mb-3">
-      {{ form.movie.label_tag }}
-      {{ form.movie }}
-      {{ form.movie.errors }}
-    </div>
-
-    <button type="submit" class="btn btn-primary">Descargar</button>
-    <a href="{% url 'descarga_list' %}" class="btn btn-link">Cancelar</a>
-  </form>
+      <button type="submit" class="btn btn-primary">Descargar</button>
+      <a href="{% url 'descarga_list' %}" class="btn btn-link">Cancelar</a>
+    </form>
+  {% endif %}
 </div>
 {% endblock %}

@@ -40,9 +40,6 @@ def guardar_opinion_general(request):
             )
     return redirect('index')
 
-
-
-
 ###codigo de prueba
 ## Vista basada en clase para manejar el registro
 class RegisterView(View):
@@ -71,8 +68,6 @@ class CommentView(View):
                 descripcion=descripcion
             )
         return redirect('pelicula_info', slug=pelicula.slug)
-
-
 
 
 # Vistas para CRUD de Curiosidades

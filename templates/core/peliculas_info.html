@@ -45,26 +45,21 @@
       {% endif %}
 
       {# Botón de descarga o enlace externo #}
-      {% if pelicula.archivo %}
-        <a href="{{ pelicula.archivo.url }}" class="btn btn-success me-2" download>
-          Descargar película
-        </a>
-      {% elif pelicula.enlace_externo %}
-        <a href="{{ pelicula.enlace_externo }}" class="btn btn-warning me-2" target="_blank">
-          Ver película en línea
-        </a>
-      {% else %}
-        <p class="text-muted">No hay contenido disponible.</p>
-      {% endif %}
+      {% if pelicula.enlace_externo %}
+  <a href="{{ pelicula.enlace_externo }}" class="btn btn-warning me-2" target="_blank">
+    Ver película en línea
+  </a>
+{% endif %}
+{% if not pelicula.archivo and not pelicula.enlace_externo %}
+  <p class="text-muted">No hay contenido disponible.</p>
+{% endif %}
+
     </div>
   </div>
 
 </div>
 
-
-
   <hr>
-
 
 <div class="row g-4 mb-5">
 

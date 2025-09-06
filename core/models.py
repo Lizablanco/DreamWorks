@@ -1,8 +1,9 @@
 # models.py
+from django.core.exceptions import ValidationError
+from django.contrib.auth.models import AbstractUser
 from django.urls import reverse
 from django.utils.text import slugify
 from django.db import models
-from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 
 # ----------------------------------------------------------------------------------
@@ -94,9 +95,8 @@ class Movie(models.Model):
         super().save(*args, **kwargs)
     def clean(self):
         if not self.archivo and not self.enlace_externo:
-            raise ValidationError("Debes subir un archivo o proporcionar un enlace externo.")
-        if self.archivo and self.enlace_externo:
-            raise ValidationError("No puedes proporcionar ambos: archivo y enlace externo.")
+            raise ValidationError("Debes subir al menos un archivo o proporcionar un enlace externo.")
+
 
     def __str__(self):
         return self.titulo
