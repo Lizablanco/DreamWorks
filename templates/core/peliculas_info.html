@@ -128,9 +128,9 @@
     {% if ya_opino %}
       <p class="text-muted">Ya has dejado tu opinión sobre esta película.</p>
     {% else %}
-      <form method="post">
+      <form method="post" action="{% url 'comment' pelicula.slug %}">
         {% csrf_token %}
-        <textarea name="descripcion" class="form-control mb-2" placeholder="Escribe tu opinión..."></textarea>
+        <textarea name="descripcion" class="form-control mb-2" placeholder="Escribe tu opinión..." required></textarea>
         <button type="submit" class="btn btn-opinion mt-2">Enviar opinión</button>
       </form>
     {% endif %}
@@ -138,34 +138,30 @@
     <p class="text-muted">Debes iniciar sesión para dejar tu opinión.</p>
   {% endif %}
 </div>
+
 <div class="info-frame mt-4">
   <h2>Opiniones de otros usuarios</h2>
   {% if opiniones %}
-    <ul class="list-unstyled">
-      {% for opinion in opiniones %}
-        <li class="mb-3">
-          <strong>{{ opinion.user.username }}</strong>
-          <span class="text-muted">– {{ opinion.fecha_opinion|date:"d M Y H:i" }}</span>
-          <p>{{ opinion.descripcion }}</p>
-        </li>
-      {% endfor %}
+  <ul>
+    {% for opinion in opiniones %}
+      <li>
+        <strong>{{ opinion.user.username }}</strong>
+        <span>{{ opinion.fecha_registro|date:"d M Y H:i" }}</span>
+        <p>{{ opinion.descripcion }}</p>
+      </li>
+    {% endfor %}
     </ul>
   {% else %}
     <p class="text-muted">No hay opiniones registradas.</p>
   {% endif %}
-
-<div class="text-center mt-4">
-  <a href="{% url 'pelicula_descargar' pelicula.slug %}"
-     class="btn btn-success btn-download me-2">
-    Descargar película
-  </a>
-  <a href="{% url 'index' %}"
-     class="btn btn-link btn-back">
-    ← Volver al listado
-  </a>
 </div>
 
-
-
+<div class="text-center mt-4">
+  <a href="{% url 'pelicula_descargar' pelicula.slug %}" class="btn btn-success btn-download me-2">
+    Descargar película
+  </a>
+  <a href="{% url 'index' %}" class="btn btn-link btn-back">
+    ← Volver al listado
+  </a>
 </div>
 {% endblock %}

@@ -45,7 +45,7 @@
 <!-- Sección de comentarios (flotante) -->
 <div id="comentarios-flotante">
   <h6>✍️ Tu opinión de la página</h6>
-  <form method="post" action="{% url 'comment' %}" id="comentarios-form">
+  <form method="post" action="{% url 'comment_general' %}">
     {% csrf_token %}
     <textarea name="descripcion" placeholder="Máximo 50 caracteres" maxlength="50" required></textarea>
     <div class="contador"><span id="chars-left">50</span> restantes</div>

@@ -31,14 +31,14 @@ def archivo_no_disponible(request, slug):
 def guardar_opinion_general(request):
     if request.method == 'POST':
         descripcion = request.POST.get('descripcion', '').strip()
-        if descripcion:
+        ya_existe = OpinionGeneral.objects.filter(user=request.user).exists()
+
+        if descripcion and not ya_existe:
             OpinionGeneral.objects.create(
                 user=request.user,
                 descripcion=descripcion
             )
     return redirect('index')
-
-
 
 
 
@@ -60,10 +60,19 @@ class LoginView(View):
 
 ## Vista para manejar los comentarios
 class CommentView(View):
-    def get(self, request):
-        return render(request, 'core/modals.html')
-    def post(self, request):
-        pass
+    def post(self, request, slug):
+        pelicula = get_object_or_404(Movie, slug=slug)
+        descripcion = request.POST.get('descripcion', '').strip()
+
+        if descripcion and not Opinion.objects.filter(user=request.user, movie=pelicula).exists():
+            Opinion.objects.create(
+                user=request.user,
+                movie=pelicula,
+                descripcion=descripcion
+            )
+        return redirect('pelicula_info', slug=pelicula.slug)
+
+
 
 
 # Vistas para CRUD de Curiosidades
@@ -241,20 +250,16 @@ class MovieDeleteView(View):
 
 # Vista para mostrar la informacion y detalles de una pelicula
 class PeliculaInfoView(View):
-    template_name = 'core/peliculas_info.html'
-
     def get(self, request, slug):
-        pelicula = get_object_or_404(
-            Movie.objects.prefetch_related('generos', 'curiosidades', 'descargas'),
-            slug=slug
-        )
-
+        pelicula = get_object_or_404(Movie, slug=slug)
+        opiniones = Opinion.objects.filter(movie=pelicula).order_by('-fecha_registro')
         ya_opino = False
         if request.user.is_authenticated:
             ya_opino = Opinion.objects.filter(user=request.user, movie=pelicula).exists()
 
-        return render(request, self.template_name, {
+        return render(request, 'core/peliculas_info.html', {
             'pelicula': pelicula,
+            'opiniones': opiniones,
             'ya_opino': ya_opino
         })
 

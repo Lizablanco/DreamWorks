@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from . import views
 from .views import ( IndexView, CuriosidadListView, CuriosidadCreateView, CuriosidadUpdateView, CuriosidadDeleteView, GeneroListView, GeneroCreateView, GeneroUpdateView, GeneroDeleteView, MovieListView, MovieCreateView, MovieUpdateView, MovieDeleteView, DescargaListView, DescargaCreateView, DescargaDeleteView, PeliculaInfoView, PeliculaDescargaView,
-MovieUpdateView, archivo_no_disponible, guardar_opinion_general )
+MovieUpdateView, archivo_no_disponible, guardar_opinion_general, CommentView )
 
 urlpatterns = [
     # Incluye las URLs de autenticación de Django
@@ -23,10 +23,11 @@ urlpatterns = [
     path('login/', views.LoginView.as_view(), name='login'),
     
     #urls para comentarios
-    path('comment/', views.CommentView.as_view(), name='comment'),
+    path('pelicula/<slug:slug>/opinar/', CommentView.as_view(), name='comment'),
 
     #url para guardar opinion general
-    path('opinion-general/', guardar_opinion_general, name='comment'),
+    path('opinion-general/', guardar_opinion_general, name='comment_general'),
+
 
     #urls para CRUD de Curiosidades
     path('curiosidades/',             CuriosidadListView.as_view(),   name='curiosidad_list'),
