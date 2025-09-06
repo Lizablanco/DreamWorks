@@ -126,3 +126,15 @@ class DescargaForm(forms.ModelForm):
             # Solo mostrar películas que no hayas descargado aún
             pendientes = DescargaUsuarioPelicula.objects.filter(user=user).values_list('movie_id', flat=True)
             self.fields['movie'].queryset = Movie.objects.exclude(pk__in=pendientes)
+
+#login
+class LoginForm(forms.Form):
+    username = forms.CharField(
+        label="Nombre de usuario",
+        max_length=150,
+        widget=forms.TextInput(attrs={'placeholder': 'Tu nombre de usuario'})
+    )
+    password = forms.CharField (
+        label = 'contraseña',
+        widget = forms.PasswordInput(attrs={'placeholder': "Tu contraseña"})
+    )

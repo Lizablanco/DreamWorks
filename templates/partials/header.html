@@ -14,7 +14,11 @@
             <li><a href="#contacto">🌟Contacto</a></li>
             <li><a href="#comentarios">✍️ Opinión</a></li>
             <li>
-                <label for="login-toggle">🔐 Iniciar Sesión</label>
+            <label
+                for="login-toggle"
+                onclick="window.location.href='{% url 'login' %}'"
+                style="cursor: pointer;">"🔐 Iniciar Sesión
+            </label>
             </li>
         </ul>
     </nav>

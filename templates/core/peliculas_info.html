@@ -68,14 +68,15 @@
     <div class="info-frame">
       <h2>Géneros</h2>
       <ul>
-        {% for genero in pelicula.generos.all %}
-          <li>
-            <strong>{{ genero.nombre }}</strong><br>
-            <small class="text-muted">{{ genero.descripcion }}</small>
-          </li>
-        {% empty %}
-          <li class="text-muted">Sin géneros asignados.</li>
-        {% endfor %}
+
+          {% for genero in pelicula.generos.all %}
+            <li>
+              <strong>{{ genero.nombre }}</strong><br>
+              <small class="text-muted">{{ genero.descripcion }}</small>
+            </li>
+          {% empty %}
+            <li class="text-muted">Sin géneros asignados.</li>
+          {% endfor %}
       </ul>
     </div>
   </div>

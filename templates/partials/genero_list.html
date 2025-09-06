@@ -8,18 +8,54 @@
       <tr><th>Nombre</th><th>Descripción</th><th>Acciones</th></tr>
     </thead>
     <tbody>
-      {% for g in generos %}
-      <tr>
-        <td>{{ g.nombre }}</td>
-        <td>{{ g.descripcion|default:'–' }}</td>
-        <td>
-          <a href="{% url 'genero_editar' g.pk %}" class="btn btn-sm btn-primary">✏️</a>
-          <a href="{% url 'genero_borrar' g.pk %}" class="btn btn-sm btn-danger">🗑️</a>
-        </td>
-      </tr>
-      {% empty %}
-      <tr><td colspan="3">No hay géneros registrados.</td></tr>
-      {% endfor %}
+
+      
+        <form method="GET" action="{% url 'genero_list' %}">
+          <input type="text" name="genero" placeholder="Buscar por género..." 
+          value="{{ query|default_if_none:'' }}">
+          <button type="submit">Buscar</button>
+        </form>
+        <br>
+
+        {% if generos %}
+        <div>
+          {% for g in generos %}
+          <tr>
+            <td>{{ g.nombre }}</td>
+            <td>{{ g.descripcion|default:'–' }}</td>
+            <td>
+              <a href="{% url 'genero_editar' g.pk %}" class="btn btn-sm btn-primary">✏️</a>
+              <a href="{% url 'genero_borrar' g.pk %}" class="btn btn-sm btn-danger">🗑️</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="3">No hay géneros registrados.</td></tr>
+          {% endfor %}
+        </div>
+
+        <div class="pagination">
+          <span class="step-links">
+            {% if page_obj.has_previous %}
+              <a href="?page={{ page_obj.previous_page_number }}
+              {% if query %}&q={{ query }}{% endif %}">anterior</a>
+            {% endif %}
+
+            <span class="current">
+              Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+              <a href="?page={{ page_obj.next_page_number }}
+              {% if query %}&q={{ query }} {% endif %}">siguiente</a>
+            {% endif %}
+          </span>
+        </div>
+
+        {% else %}
+        <p>No se encontraron generos para "{{ query }}".</p>
+        {%endif%}
+
+
       </tbody>
     </table>
 </div>

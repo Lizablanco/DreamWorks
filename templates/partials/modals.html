@@ -1,4 +1,25 @@
 {% load static %} 
+<!--------------------------------------------LOGIN---------------------------------------------------------- -->
+<input type="checkbox" id="login-toggle" style="display: none;">
+<div class="formulario-login" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1001; background: rgb(145, 122, 247); padding: 2rem; border: 3px solid #F5E7C1; border-radius: 10px; width: 300px;">
+    <h5 style="color: #F5E7C1; text-align: center;">Ingreso al Reino</h5>
+    <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        <div class="campo-formulario">
+            {{ form.username.label_tag }}
+            {{ form.username }}
+        </div>
+        <div class="campo-formulario">
+            {{ form.password.label_tag }}
+            {{ form.password }}
+        </div>
+        {% if error_message %}
+            <p style="color: red;">{{ error_message }}</p>
+        {% endif %}
+        <button type="submit" class="boton-medieval">Iniciar sesión</button>
+    </form>
+</div>
+<!------------------------------------------------------------------------------------------------------ -->
 
 <!-- Sistema de registro oculto -->
 <input type="checkbox" id="registro-toggle" style="display: none;">

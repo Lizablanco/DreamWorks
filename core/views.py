@@ -10,7 +10,10 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views import View
 from .models import Curiosidad, Genero, Movie, DescargaUsuarioPelicula, Opinion, OpinionGeneral
-from .forms  import CuriosidadForm, GeneroForm, MovieForm, DescargaForm
+from .forms  import CuriosidadForm, GeneroForm, MovieForm, DescargaForm, LoginForm
+from django.db.models import Q
+from django.core.paginator import Paginator
+from django.contrib.auth import authenticate, login
 
 # Create your views here.
 
@@ -25,6 +28,7 @@ def index(request):
 def archivo_no_disponible(request, slug):
     pelicula = get_object_or_404(Movie, slug=slug)
     return render(request, 'partials/archivo_no_disponible.html', {'pelicula': pelicula})
+
 
 # vista para guardar la opinion general
 @login_required
@@ -50,11 +54,32 @@ class RegisterView(View):
 
 ## Vista para manejar el inicio de sesion
 class LoginView(View):
-    def get(self, request):
-        return render(request, 'core/modals.html')
+    template_name= 'core/index.html'
     
-    def post(self, request):
-        pass
+    def get(self, request, *args, **kwasrgs):
+        
+        form= LoginForm()
+        return render(request, self.template_name, {'form': form})
+    
+    def post(self, request, *args, **kwargs):
+        form =LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password= form.cleaned_data['password']
+            
+            user = authenticate(request, username=username, password=password)
+            
+            if user is not None:
+                
+                login(request, user)
+                return redirect('index')
+            else:
+                return render(request, self.template_name, {
+                    'form': form,
+                    'error_message': 'Nombre de usuario o contraseña incorrectos'
+                })
+                
+        return render(request, self.template_name, {'form': form})
 
 ## Vista para manejar los comentarios
 class CommentView(View):
@@ -128,10 +153,30 @@ class CuriosidadDeleteView(View):
 # Vistas para CRUD de Generos
 class GeneroListView(View):
     template_name = 'partials/genero_list.html'
+    paginate_by=2
 
     def get(self, request):
         generos = Genero.objects.all().order_by('nombre')
-        return render(request, self.template_name, {'generos': generos})
+        
+        query = request.GET.get('q')
+        
+        if query:
+            generos = generos.filter(
+                Q(nombre__icontains=query) |
+                Q(descripcion__icontains=query)
+            ).distinct()
+            
+        paginator= Paginator(generos, self.paginate_by)
+        page_number = request.GET.get('page')
+        page_obj= paginator.get_page(page_number)
+        
+        context = {
+            'page_obj': page_obj,
+            'generos': page_obj.object_list,
+            'query': query
+        }
+            
+        return render(request, self.template_name, context)
 
 # Vista para crear un nuevo genero
 class GeneroCreateView(View):

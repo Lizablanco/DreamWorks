@@ -217,3 +217,4 @@ class MovieCuriosidad(models.Model):
         
     def __str__(self):
         return f"{self.movie.titulo} - {self.curiosidad.titulo}"
+
