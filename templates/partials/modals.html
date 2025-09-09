@@ -1,69 +1,50 @@
 {% load static %} 
-<!-- ------------------------------------------LOGIN---------------------------------------------------------- -->
-<div id="formulario-login" class="formulario-login" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1001; background: rgb(145, 122, 247); padding: 2rem; border: 3px solid #F5E7C1; border-radius: 10px; width: 300px;">
-    <h5 style="color: #F5E7C1; text-align: center;">Ingreso al Reino</h5>
-    <form method="post" action="{% url 'login' %}">
-        {% csrf_token %}
-        <div class="campo-formulario">
-            {{ form.username.label_tag }}
-            {{ form.username }}
-        </div>
-        <div class="campo-formulario">
-            {{ form.password.label_tag }}
-            {{ form.password }}
-        </div>
-        {% if error_message %}
-            <p style="color: red;">{{ error_message }}</p>
-        {% endif %}
-        <button type="submit" class="boton-medieval">Iniciar sesión</button>
-    </form>
-</div>
-<!------------------------------------------------------------------------------------------------------ -->
-
-<!-- Sistema de registro oculto -->
-<!-- Toggle oculto para activar el modal -->
-
-
 <!-- Modal de registro -->
-<div id="formulario-registro" class="formulario-registro" style="display: none;">
-    <h5 style="color: #F5E7C1; text-align: center;">Registro en el Reino</h5>
-    <form method="post" action="{% url 'registro' %}">
+
+<div id="formulario-registro" class="formulario-registro">
+    <form method="post">
         {% csrf_token %}
         <div class="campo-formulario">
-            {{ form.username.label_tag }}
-            {{ form.username }}
+            {{ registro_form.username.label_tag }}
+            {{ registro_form.username }}
         </div>
         <div class="campo-formulario">
-            {{ form.email.label_tag }}
-            {{ form.email }}
+            {{ registro_form.email.label_tag }}
+            {{ registro_form.email }}
         </div>
         <div class="campo-formulario">
-            {{ form.password1.label_tag }}
-            {{ form.password1 }}
+            {{ registro_form.password1.label_tag }}
+            {{ registro_form.password1 }}
         </div>
         <div class="campo-formulario">
-            {{ form.password2.label_tag }}
-            {{ form.password2 }}
+            {{ registro_form.password2.label_tag }}
+            {{ registro_form.password2 }}
         </div>
-        {% if error_message %}
-            <p style="color: red;">{{ error_message }}</p>
-        {% endif %}
         <button type="submit" class="boton-medieval">Registrarse</button>
     </form>
 </div>
 
-{% if user.is_authenticated %}
-<!-- Sección de comentarios (flotante) -->
-<div id="comentarios-flotante">
-  <h6>✍️ Tu opinión de la página</h6>
-  <form method="post" action="{% url 'comment_general' %}">
-    {% csrf_token %}
-    <textarea name="descripcion" placeholder="Máximo 50 caracteres" maxlength="50" required></textarea>
-    <div class="contador"><span id="chars-left">50</span> restantes</div>
-    <button type="submit" class="boton-medieval">Enviar</button>
-  </form>
+
+<!-- Modal de login -->
+<div id="formulario-login" class="formulario-login">
+    <form method="post">
+        {% csrf_token %}
+        <div class="campo-formulario">
+            {{ login_form.username.label_tag }}
+            {{ login_form.username }}
+        </div>
+        <div class="campo-formulario">
+            {{ login_form.password.label_tag }}
+            {{ login_form.password }}
+        </div>
+        <button type="submit" class="boton-medieval">Iniciar sesión</button>
+    </form>
 </div>
-{% endif %}
+
+
+
+
+
 
 
 

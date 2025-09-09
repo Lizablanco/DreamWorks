@@ -10,7 +10,7 @@ from .views import (
     MovieListView, MovieCreateView, MovieUpdateView, MovieDeleteView,
     DescargaListView, DescargaCreateView, DescargaDeleteView,
     PeliculaInfoView, PeliculaDescargaView,
-    archivo_no_disponible, guardar_opinion_general, CommentView, LoginView, RegistroView, UserLogoutView
+    archivo_no_disponible, guardar_opinion_general, CommentView, LoginView, RegistroView, UserLogoutView,
 )
 
 urlpatterns = [
@@ -24,8 +24,8 @@ urlpatterns = [
     path('', IndexView.as_view(), name='index'),
 
     # Registro y login personalizados
-    path('registro/', views.RegistroView.as_view(), name='registro'),
-    path('login/', views.LoginView.as_view(), name='login'),
+    path('registro/', RegistroView.as_view(), name='registro'),
+    path('login/', LoginView.as_view(), name='login'),
     path('logout/', UserLogoutView.as_view(), name='logout'),
 
     # Opiniones
@@ -57,7 +57,7 @@ urlpatterns = [
 
     # Información y acciones sobre películas
     path('pelicula/<slug:slug>/', PeliculaInfoView.as_view(), name='pelicula_info'),
-    path('pelicula/<slug:slug>/descargar/', PeliculaDescargaView.as_view(), name='pelicula_descargar'),
+    path('descargar/<slug:slug>/', PeliculaDescargaView.as_view(), name='pelicula_descargar'),
 
     # Página de error si no hay archivo disponible
     path('DreamWorks/pelicula/<slug:slug>/archivo-no-disponible/', archivo_no_disponible, name='archivo_no_disponible'),

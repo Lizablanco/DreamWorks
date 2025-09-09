@@ -1,7 +1,8 @@
 /* cursor */
 html {
-    cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><text x='0' y='28' font-size='28'>🪄</text></svg>"), auto;
+    cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><text x='0' y='24' font-size='30'>🌟</text></svg>") 16 16, auto;
 }
+
 
 /* presentacion del proyecto*/
 .presentacion-proyecto {
@@ -146,8 +147,13 @@ html {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     border: 2px solid #e7d000;
     z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
 }
 
+/* Lista horizontal */
 .menu-lista {
     display: flex;
     gap: 1.5rem;
@@ -156,6 +162,7 @@ html {
     margin: 0;
 }
 
+/* Enlaces y etiquetas */
 .menu-lista a,
 .menu-lista label {
     color: #161206;
@@ -173,42 +180,32 @@ html {
     text-shadow: 0 0 8px #FFD700;
 }
 
-/* Para forzar los estilos de los registros e inicio de sesion */
-.formulario-registro,
-.formulario-login {
-    position: static !important;
-    display: block !important;
-    float: left;
-    clear: both;
+/* Botones de sesión */
+.menu-medieval p {
+    margin: 0;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
 }
 
-/* Forzado para los estilos*/
-.formulario-registro,
-.formulario-login {
-    position: fixed !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    z-index: 1001 !important;
-    display: none !important;
-    background: rgb(145, 122, 247) !important;
-    padding: 2rem !important;
-    border: 3px solid #F5E7C1 !important;
-    border-radius: 10px !important;
-    width: 300px !important;
+.boton-medieval {
+    background: #473804;
+    color: #fffb26;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    font-family: 'MedievalSharp', cursive;
+    cursor: pointer;
+    transition: all 0.3s;
+    border-radius: 6px;
+    text-decoration: none;
 }
 
-/* Cuando estén activos */
-.formulario-registro[style*="display: block"],
-.formulario-login[style*="display: block"] {
-    display: block !important;
+.boton-medieval:hover {
+    background: rgba(68, 101, 209, 0.589);
 }
 
-/* Sistema de registro flotante */
-#registro-toggle {
-    display: none;
-}
-
+/*  Formularios flotantes (login y registro) */
+.formulario-login,
 .formulario-registro {
     position: fixed;
     top: 50%;
@@ -219,15 +216,20 @@ html {
     border: 3px solid #F5E7C1;
     border-radius: 10px;
     z-index: 1001;
-    display: none;
     width: 300px;
+    display: none;
+    /* oculto por defecto */
+    opacity: 0;
 }
 
-#registro-toggle:checked~.formulario-registro {
-    display: block;
-    animation: aparecer 0.4s ease-out;
+/* Estado abierto */
+.formulario-login.is-open,
+.formulario-registro.is-open {
+    display: block !important;
+    animation: aparecer 0.4s ease-out forwards;
 }
 
+/* ✨ Animación de entrada */
 @keyframes aparecer {
     from {
         opacity: 0;
@@ -240,7 +242,7 @@ html {
     }
 }
 
-/* Estilos de formulario */
+/* Campos del formulario */
 .campo-formulario {
     margin-bottom: 1rem;
 }
@@ -258,77 +260,7 @@ html {
     border: 1px solid #e6d119;
 }
 
-.boton-medieval {
-    background: #473804;
-    color: #fffb26;
-    border: none;
-    padding: 0.5rem 1rem;
-    width: 100%;
-    font-family: 'MedievalSharp', cursive;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.boton-medieval:hover {
-    background: #5C3317;
-}
-
-/* Sistema de inicio de sesión flotante */
-#login-toggle {
-    display: none;
-}
-
-.formulario-login {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgb(145, 122, 247);
-    padding: 2rem;
-    border: 3px solid #F5E7C1;
-    border-radius: 10px;
-    z-index: 1001;
-    display: none;
-    width: 300px;
-}
-
-#login-toggle:checked~.formulario-login {
-    display: block;
-    animation: aparecer 0.4s ease-out;
-}
-
-/* Estilos de formulario */
-.campo-formulario {
-    margin-bottom: 1rem;
-}
-
-.campo-formulario label {
-    display: block;
-    color: #F5E7C1;
-    margin-bottom: 0.3rem;
-}
-
-.campo-formulario input {
-    width: 100%;
-    padding: 0.5rem;
-    background: rgba(245, 231, 193, 0.9);
-    border: 1px solid #e6d119;
-}
-
-.boton-medieval {
-    background: #473804;
-    color: #fffb26;
-    border: none;
-    padding: 0.5rem 1rem;
-    width: 100%;
-    font-family: 'MedievalSharp', cursive;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.boton-medieval:hover {
-    background: #5C3317;
-}
+/* Botón medieval */
 
 /* Sistema de comentarios flotante */
 #comentarios-flotante {
@@ -364,6 +296,8 @@ html {
     text-align: right;
 }
 
+/* opiniones generales */
+/* Fondo general oscuro con estrellas */
 .opiniones-generales {
     margin-top: 3rem;
     padding: 2rem;
@@ -378,8 +312,6 @@ html {
     border-left: 3px solid #f7ec20;
     padding-left: 1rem;
 }
-
-
 
 
 /* Grid de películas*/

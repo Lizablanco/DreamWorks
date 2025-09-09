@@ -12,12 +12,13 @@
             <li><a href="#comentarios">✍️ Opinión</a></li>
         </ul>
         {% if user.is_authenticated %}
-            <p>¡Hola, {{ user.username }}! <a href="{% url 'logout' %}">Cerrar sesión</a></p>
-        {% else %}
-            <p><button onclick="document.getElementById('formulario-registro').style.display='block'">
-                <label for="registro-toggle">📜 Registrarse</label></button> | 
-                <button onclick="document.getElementById('formulario-login').style.display='block'">
-                <label for="login-toggle">📜 Login</label></button></p>
-        {% endif %}
+    <p>¡Hola, {{ user.username }}! <a href="{% url 'logout' %}">Cerrar sesión</a></p>
+{% else %}
+    <p>
+        <a href="{% url 'registro' %}" class="boton-medieval">Registrarse</a>
+        <a href="{% url 'login' %}" class="boton-medieval">Iniciar sesión</a>
+    </p>
+{% endif %}
+
     </nav>
 </header>

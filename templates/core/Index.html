@@ -2,8 +2,10 @@
 {% extends 'base.html' %}
 {% load static %}
 
+
 {% block content %}
 <!-- Título Principal -->
+
 <div class="dreamworks-main">
   <h1>Top las Mejores 12 películas de DreamWorks🌙</h1>
 </div>
@@ -227,19 +229,36 @@
         </div>
     </div>
 </div>
-{% include 'partials/modals.html' %}
 
-<section class="opiniones-generales">
-  <h4>🗣️ Lo que dicen los visitantes del Reino</h4>
-  {% for opinion in opiniones_generales %}
-    <blockquote>
-      “{{ opinion.descripcion }}”<br>
-      <small>— {{ opinion.user.username }}</small>
-    </blockquote>
-  {% empty %}
-    <p class="text-muted">Sé el primero en dejar tu opinión sobre el Reino ✨</p>
+{% include 'partials/opiniones.html'%}
+
+{% if messages %}
+  {% for message in messages %}
+    <div class="mensaje-flotante">{{ message }}</div>
   {% endfor %}
-</section>
+{% endif %}
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const abrirLogin = {{ request.session.abrir_login|yesno:"true,false" }};
+    
+    if (abrirLogin && !sessionStorage.getItem('abrir_login_mostrado')) {
+      const modal = document.getElementById('formulario-login');
+      if (modal) modal.classList.add('is-open');
+      sessionStorage.setItem('abrir_login_mostrado', 'true');
+    }
+
+    const mensaje = document.querySelector('.mensaje-flotante');
+    if (mensaje) {
+      setTimeout(() => {
+        mensaje.style.opacity = '0';
+        setTimeout(() => mensaje.remove(), 500);
+      }, 5000);
+    }
+  });
+</script>
+
 
 
 {% endblock %}

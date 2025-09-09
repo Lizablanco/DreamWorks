@@ -15,8 +15,10 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
 
 # Create your views here.
+
 
 # vista para manejar cuando el archivo no esta disponible
 def archivo_no_disponible(request, slug):
@@ -36,7 +38,14 @@ def guardar_opinion_general(request):
                 user=request.user,
                 descripcion=descripcion
             )
+            messages.success(request, '¡Gracias por tu opinión! 📝')
+        elif ya_existe:
+            messages.warning(request, 'Ya has enviado una opinión anteriormente.')
+        else:
+            messages.error(request, 'La descripción no puede estar vacía.')
+
     return redirect('index')
+
 
 ###codigo de prueba
 ## Vista basada en clase para manejar el registro
@@ -46,13 +55,18 @@ class RegistroView(View):
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return redirect('index')
-        form = RegistroForm()
-        return render(request, self.template_name, {'form': form})
+        opiniones_generales = OpinionGeneral.objects.order_by('-fecha_registro')[:5]
+        return render(request, self.template_name, {
+            'registro_form': RegistroForm(),
+            'login_form': LoginForm(), 
+            'opiniones_generales': opiniones_generales
+        })
 
     def post(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return redirect('index')
         form = RegistroForm(request.POST)
+        opiniones_generales = OpinionGeneral.objects.order_by('-fecha_registro')[:5]
         if form.is_valid():
             username = form.cleaned_data['username']
             email = form.cleaned_data['email']
@@ -61,22 +75,29 @@ class RegistroView(View):
 
             if password1 != password2:
                 return render(request, self.template_name, {
-                    'form': form,
+                    'registro_form': form,
+                    'login_form': LoginForm(),
+                    'opiniones_generales': opiniones_generales,
                     'error_message': 'Las contraseñas no coinciden'
                 })
 
             if User.objects.filter(username=username).exists():
                 return render(request, self.template_name, {
-                    'form': form,
-                    'error_message': 'Ese nombre de usuario ya está en uso'
+                    'registro_form': form,
+                    'login_form': LoginForm(),
+                    'error_message': 'Ese nombre de usuario ya está en uso',
+                    'opiniones_generales': opiniones_generales
                 })
 
-            user = User.objects.create_user(username=username, email=email, password=password1)
-            user.save()
+            User.objects.create_user(username=username, email=email, password=password1)
             messages.success(request, 'Registro exitoso. Ahora puedes iniciar sesión.')
-            return redirect('login')  # Asegúrate de tener esta ruta definida
+            return redirect('login')
 
-        return render(request, self.template_name, {'form': form})
+        return render(request, self.template_name, {
+            'registro_form': form,
+            'login_form': LoginForm(),
+            'opiniones_generales': opiniones_generales,
+        })
 
 # vista de logout
 class UserLogoutView(View):
@@ -87,50 +108,65 @@ class UserLogoutView(View):
 
 ## Vista para manejar el inicio de sesion
 class LoginView(View):
-    template_name= 'core/index.html'
+    template_name = 'core/index.html'
     
-    def get(self, request, *args, **kwasrgs):
+    def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return redirect('index')
-        form= LoginForm()
-        return render(request, self.template_name, {'form': form})
+
+        opiniones_generales = OpinionGeneral.objects.order_by('-fecha_registro')[:5]
+
+        return render(request, self.template_name, {
+            'login_form': LoginForm(),
+            'registro_form': RegistroForm(),
+            'opiniones_generales': opiniones_generales,
+        })
     
     def post(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return redirect('index')
-        form =LoginForm(request.POST)
+
+        form = LoginForm(request.POST)
+        opiniones_generales = OpinionGeneral.objects.order_by('-fecha_registro')[:5]
+
         if form.is_valid():
             username = form.cleaned_data['username']
-            password= form.cleaned_data['password']
-            
+            password = form.cleaned_data['password']
             user = authenticate(request, username=username, password=password)
-            
+
             if user is not None:
-                
                 login(request, user)
                 return redirect('index')
             else:
-                return render(request, self.template_name, {
-                    'form': form,
-                    'error_message': 'Nombre de usuario o contraseña incorrectos'
-                })
-                
-        return render(request, self.template_name, {'form': form})
+                messages.error(request, 'Nombre de usuario o contraseña incorrectos')
+        else:
+            messages.error(request, 'Por favor corrige los errores del formulario')
 
-#
+        return render(request, self.template_name, {
+            'login_form': form,
+            'registro_form': RegistroForm(),
+            'opiniones_generales': opiniones_generales
+        })
+
 
 ## Vista para manejar los comentarios
-class CommentView(LoginRequiredMixin,View):
+class CommentView(LoginRequiredMixin, View):
     def post(self, request, slug):
         pelicula = get_object_or_404(Movie, slug=slug)
         descripcion = request.POST.get('descripcion', '').strip()
 
-        if descripcion and not Opinion.objects.filter(user=request.user, movie=pelicula).exists():
+        ya_opino = Opinion.objects.filter(user=request.user, movie=pelicula).exists()
+
+        if descripcion and not ya_opino:
             Opinion.objects.create(
                 user=request.user,
                 movie=pelicula,
                 descripcion=descripcion
             )
+
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'status': 'ok', 'message': 'Opinión guardada ✨'})
+        
         return redirect('pelicula_info', slug=pelicula.slug)
 
 
@@ -345,42 +381,58 @@ class PeliculaInfoView(View):
 
 # Vista para la pagina principal que muestra las peliculas mas recientes
 class IndexView(View):
-    template_name = 'core/Index.html'
+    template_name = 'core/index.html'
 
     def get(self, request):
+        request.session.pop('abrir_login', None)  
         opiniones_generales = OpinionGeneral.objects.order_by('-fecha_registro')[:5]
         peliculas = Movie.objects.all().order_by('-fecha_lanzamiento')
         return render(request, self.template_name, {
-            'peliculas': peliculas, 'opiniones_generales': opiniones_generales
+            'peliculas': peliculas,
+            'opiniones_generales': opiniones_generales,
+            'registro_form': RegistroForm(),
+            'login_form': LoginForm()
         })
+
 
 
 # Vistas para manejar las descargas de peliculas por usuarios
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class DescargaListView(LoginRequiredMixin, View):
     template_name = 'partials/descarga_list.html'
 
-    def get(self, request):
-        # Si es staff, muestro todas las descargas; si no, solo las del usuario
-        if request.user.is_staff:
-            descargas = DescargaUsuarioPelicula.objects.select_related('movie', 'user') \
-                        .order_by('-fecha_descarga')
-        else:
-            descargas = DescargaUsuarioPelicula.objects.filter(user=request.user) \
-                        .select_related('movie') \
-                        .order_by('-fecha_descarga')
-        return render(request, self.template_name, {
-            'descargas': descargas
-        })
+    def pelicula_descargar(request, slug):
+        if not request.user.is_authenticated:
+            messages.error(request, 'Debes iniciar sesión para descargar esta película 🪄')
+            return redirect('login')
+
+        pelicula = get_object_or_404(Movie, slug=slug)
+
+        if not pelicula.archivo or not os.path.isfile(pelicula.archivo.path):
+            return redirect(pelicula.get_absolute_url())
+
+        return FileResponse(pelicula.archivo.open(), as_attachment=True, filename=os.path.basename(pelicula.archivo.name))
 
 # Vista para manejar la descarga real del archivo
-@login_required
-def pelicula_descargar(request, slug):
+def descargar_pelicula (request, slug):
+    if not request.user.is_authenticated:
+        messages.error(request, 'Debes iniciar sesión para descargar esta película 🌟')
+        request.session['abrir_login'] = True
+        return redirect('index')
+
     pelicula = get_object_or_404(Movie, slug=slug)
 
     if not pelicula.archivo or not os.path.isfile(pelicula.archivo.path):
+        messages.error(request, 'El archivo de esta película no está disponible 🛡️')
         return redirect(pelicula.get_absolute_url())
 
-    return FileResponse(pelicula.archivo.open(), as_attachment=True, filename=os.path.basename(pelicula.archivo.name))
+    return FileResponse(
+        pelicula.archivo.open(),
+        as_attachment=True,
+        filename=os.path.basename(pelicula.archivo.name)
+    )
+
+
 
 # para registrar una nueva descarga
 class DescargaCreateView(LoginRequiredMixin,View):

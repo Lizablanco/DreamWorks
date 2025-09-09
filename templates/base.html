@@ -40,7 +40,7 @@
         
         .dreamworks-main h1 {
             font-size: 4.5rem !important;
-            text-shadow: 0 0 10px #000, 0 0 20px #f7ec20, 0 0 30px #f7ec20 !important;
+            text-shadow: 0 0 10px #bdaa3ee8, 0 0 20px #f7ec20, 0 0 30px #f7ec20 !important;
             margin: 0 !important;
             letter-spacing: 3px !important;
             font-weight: normal !important;
@@ -53,6 +53,7 @@
             display: none !important;
         }
     </style>
+    
 </head>
 <body>
 
@@ -70,6 +71,7 @@
         {% endfor %}
     {% endif %}
     </div>
+    
 
     {% block content %}
     {% endblock %}
@@ -78,14 +80,52 @@
 
     <!-- Footer -->
     {% include 'partials/modals.html' %}
-    {% include 'partials/footer.html' %}
+    {% if request.path == '/registro/' %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.querySelector('.formulario-registro');
+    if (modal) modal.style.display = 'block';
+});
+</script>
+{% elif request.path == '/login/' %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.querySelector('.formulario-login');
+    if (modal) modal.style.display = 'block';
+});
+</script>
+{% endif %}
 
-    
+    {% include 'partials/footer.html' %}
 
 
     <!-- Scripts JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
+    <!--scripts para contar en las opiniones generales-->
+    <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const textarea = document.querySelector('#comentarios-flotante textarea');
+    const contador = document.querySelector('#chars-left');
+    const maxChars = parseInt(textarea.getAttribute('maxlength'));
+
+    if (textarea && contador) {
+      textarea.addEventListener('input', function () {
+        const restantes = maxChars - textarea.value.length;
+        contador.textContent = restantes;
+
+        // Efecto visual suave
+        if (restantes <= 10) {
+          contador.style.color = '#ff6b6b'; // rojo suave
+        } else {
+          contador.style.color = '#fcf159'; // tu color original
+        }
+      });
+    }
+  });
+</script>
+
+
     <!-- Script para animaciones de fondo -->
     <script>
         
@@ -111,120 +151,125 @@
             });
         }
     });
+</script>
 
-    // CÓDIGO MEJORADO PARA FORMULARIOS
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM cargado - inicializando formularios...');
-        
-        const formularioRegistro = document.querySelector('.formulario-registro');
-        const formularioLogin = document.querySelector('.formulario-login');
-        const labelRegistro = document.querySelector('label[for="registro-toggle"]');
-        
-        // Verificar que los elementos existen
-        if (!formularioRegistro) console.error('No se encontró .formulario-registro');
-        if (!formularioLogin) console.error('No se encontró .formulario-login');
-        if (!labelRegistro) console.error('No se encontró label[for="registro-toggle"]');
-        if (!labelLogin) console.error('No se encontró label[for="login-toggle"]');
-        
-        function cerrarTodosFormularios() {
-            if (formularioRegistro) formularioRegistro.style.display = 'none';
-            if (formularioLogin) formularioLogin.style.display = 'none';
-        }
-        
-        function asegurarPosicionamiento() {
-            const estiloFixed = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1001; background: rgb(145, 122, 247); padding: 2rem; border: 3px solid #F5E7C1; border-radius: 10px; width: 300px;';
-            
-            if (formularioRegistro) {
-                formularioRegistro.style.cssText = estiloFixed + formularioRegistro.style.cssText;
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let modal = null;
+    let triggerBtn = null;
+
+    const modalRegistro = document.getElementById('formulario-registro');
+    const modalLogin = document.getElementById('formulario-login');
+    const btnRegistro = document.querySelector('a[href$="/registro/"]');
+    const btnLogin = document.querySelector('a[href$="/login/"]');
+
+    // Detectar modal según URL
+    if (window.location.pathname.includes('/registro')) {
+        modal = modalRegistro;
+        triggerBtn = btnRegistro;
+    } else if (window.location.pathname.includes('/login')) {
+        modal = modalLogin;
+        triggerBtn = btnLogin;
+    }
+
+    // Abrir modal
+    function abrirModal(m) {
+        m.classList.add('is-open');
+    }
+
+    // Cerrar modal y limpiar URL
+    function cerrarModal(m) {
+        m.classList.remove('is-open');
+        window.history.pushState({}, '', '/');
+    }
+
+    // Abrir al cargar
+    if (modal) {
+        abrirModal(modal);
+    }
+
+    // Cerrar al hacer clic fuera
+    document.addEventListener('click', function(e) {
+        if (modal && modal.classList.contains('is-open')) {
+            if (!modal.contains(e.target) && e.target !== triggerBtn) {
+                cerrarModal(modal);
             }
-            
-            if (formularioLogin) {
-                formularioLogin.style.cssText = estiloFixed + formularioLogin.style.cssText;
-            }
         }
-        
-        // Configurar eventos
-        if (labelRegistro && formularioRegistro) {
-            labelRegistro.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                asegurarPosicionamiento();
-                cerrarTodosFormularios();
-                formularioRegistro.style.display = 'block';
-                console.log('Formulario registro mostrado');
-            });
-        }
-        
-        if (labelLogin && formularioLogin) {
-            labelLogin.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                asegurarPosicionamiento();
-                cerrarTodosFormularios();
-                formularioLogin.style.display = 'block';
-                console.log('Formulario login mostrado');
-            });
-        }
-        
-        // Cerrar formularios al hacer clic fuera
-        document.addEventListener('click', function(e) {
-            if (formularioRegistro && formularioRegistro.style.display === 'block') {
-                if (!e.target.closest('.formulario-registro') && !e.target.closest('label[for="registro-toggle"]')) {
-                    formularioRegistro.style.display = 'none';
-                }
-            }
-            
-            if (formularioLogin && formularioLogin.style.display === 'block') {
-                if (!e.target.closest('.formulario-login') && !e.target.closest('label[for="login-toggle"]')) {
-                    formularioLogin.style.display = 'none';
-                }
-            }
-        });
-        
-        // Prevenir que el clic en los formularios los cierre
-        if (formularioRegistro) {
-            formularioRegistro.addEventListener('click', function(e) {
-                e.stopPropagation();
-            });
-        }
-        
-        if (formularioLogin) {
-            formularioLogin.addEventListener('click', function(e) {
-                e.stopPropagation();
-            });
-        }
-        
-        // Cerrar con tecla ESC
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                cerrarTodosFormularios();
-            }
-        });
-        
-        // Inicializar posicionamiento
-        asegurarPosicionamiento();
     });
 
-    // Contador de caracteres para comentarios
-    document.addEventListener('DOMContentLoaded', function() {
-        const textarea = document.querySelector('#comentarios-form textarea');
-        const contador = document.querySelector('#chars-left');
-        
-        if (textarea && contador) {
-            textarea.addEventListener('input', function() {
-                const caracteresRestantes = 50 - this.value.length;
-                contador.textContent = caracteresRestantes;
-                
-                if (caracteresRestantes < 10) {
-                    contador.style.color = '#ff4444';
-                } else {
-                    contador.style.color = '#F5E7C1';
-                }
-            });
-        }
-    });
-    
-    </script>
+    // Cerrar si se hace clic en el mismo botón
+    if (triggerBtn) {
+        triggerBtn.addEventListener('click', function(e) {
+            if (modal && modal.classList.contains('is-open')) {
+                e.preventDefault();
+                cerrarModal(modal);
+            }
+        });
+    }
+});
+</script>
+<script>
+  setTimeout(() => {
+    const mensaje = document.querySelector('.mensaje-flotante');
+    if (mensaje) mensaje.style.display = 'none';
+  }, 5000); // desaparece después de 5 segundos
+</script>
+<!-- contenido de tu página -->
+{% if messages %}
+  {% for message in messages %}
+    <div class="mensaje-flotante">{{ message }}</div>
+  {% endfor %}
+{% endif %}
+
+<!-- aquí va el script -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const mensaje = document.querySelector('.mensaje-flotante');
+    if (mensaje) {
+      setTimeout(() => {
+        mensaje.style.opacity = '0';
+        setTimeout(() => mensaje.remove(), 500);
+      }, 5000);
+    }
+
+    {% if request.session.abrir_login %}
+      if (!sessionStorage.getItem('abrir_login_mostrado')) {
+        const modal = document.getElementById('formulario-login');
+        if (modal) modal.classList.add('is-open');
+        sessionStorage.setItem('abrir_login_mostrado', 'true');
+      }
+    {% endif %}
+  });
+</script>
+<!-- contenido de tu página -->
+{% if messages %}
+  {% for message in messages %}
+    <div class="mensaje-flotante">{{ message }}</div>
+  {% endfor %}
+{% endif %}
+
+<!-- aquí va el script -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const mensaje = document.querySelector('.mensaje-flotante');
+    if (mensaje) {
+      setTimeout(() => {
+        mensaje.style.opacity = '0';
+        setTimeout(() => mensaje.remove(), 500);
+      }, 5000);
+    }
+
+    {% if request.session.abrir_login %}
+      if (!sessionStorage.getItem('abrir_login_mostrado')) {
+        const modal = document.getElementById('formulario-login');
+        if (modal) modal.classList.add('is-open');
+        sessionStorage.setItem('abrir_login_mostrado', 'true');
+      }
+    {% endif %}
+  });
+</script>
+
+
     
     {% block extra_js %}
     {% endblock %}
