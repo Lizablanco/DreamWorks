@@ -138,3 +138,24 @@ class LoginForm(forms.Form):
         label = 'contraseña',
         widget = forms.PasswordInput(attrs={'placeholder': "Tu contraseña"})
     )
+
+#sistema de registro
+class RegistroForm(forms.Form):
+    username = forms.CharField(
+        label="Nombre de usuario",
+        max_length=150,
+        widget=forms.TextInput(attrs={'placeholder': 'Elige un nombre de usuario'})
+    )
+    email = forms.EmailField(
+        label="Correo electrónico",
+        widget=forms.EmailInput(attrs={'placeholder': 'Tu correo electrónico'})
+    )
+    password1 = forms.CharField(
+        label="Contraseña",
+        widget=forms.PasswordInput(attrs={'placeholder': 'Crea una contraseña'})
+    )
+    password2 = forms.CharField(
+        label="Confirmar contraseña",
+        widget=forms.PasswordInput(attrs={'placeholder': 'Repite la contraseña'})
+    )
+

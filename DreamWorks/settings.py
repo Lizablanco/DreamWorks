@@ -35,6 +35,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -133,3 +134,51 @@ AUTH_USER_MODEL = 'core.User'
 #configuracion para media
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+LOGIN_URL='/DreamWorks/login/'
+
+JAZZMIN_SETTINGS={
+    "show_ui_builder": True,
+    "site_title": "DreamWorsk",
+    "site_brand": "Django_DreamWorsk",
+    "site_logo": "C:\laragon\www\python\django\DreamWorks_project\DreamWorks\static\core\img\logoo.jpeg",
+    "login_logo_dark": "C:\laragon\www\python\django\DreamWorks_project\DreamWorks\static\core\img\images.jpeg",
+    "welcome_sign": "Bienvenido de vuelta",
+    "copyright":"Litzamar",
+    "search_model": ["core.User", "core.Movie"],
+    # "icons":{
+    #     "core.User": "",#url de iconos
+    #     "core.Movie": "",
+    # }
+}
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": False,
+    "accent": "accent-info",
+    "navbar": "navbar-cyan navbar-dark",
+    "no_navbar_border": False,
+    "navbar_fixed": False,
+    "layout_boxed": False,
+    "footer_fixed": False,
+    "sidebar_fixed": False,
+    "sidebar": "sidebar-dark-teal",
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": False,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": False,
+    "theme": "default",
+    "dark_mode_theme": None,
+    "button_classes": {
+        "primary": "btn-primary",
+        "secondary": "btn-secondary",
+        "info": "btn-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success"
+    }
+}

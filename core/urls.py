@@ -10,7 +10,7 @@ from .views import (
     MovieListView, MovieCreateView, MovieUpdateView, MovieDeleteView,
     DescargaListView, DescargaCreateView, DescargaDeleteView,
     PeliculaInfoView, PeliculaDescargaView,
-    archivo_no_disponible, guardar_opinion_general, CommentView
+    archivo_no_disponible, guardar_opinion_general, CommentView, LoginView, RegistroView, UserLogoutView
 )
 
 urlpatterns = [
@@ -24,8 +24,9 @@ urlpatterns = [
     path('', IndexView.as_view(), name='index'),
 
     # Registro y login personalizados
-    path('register/', views.RegisterView.as_view(), name='register'),
+    path('registro/', views.RegistroView.as_view(), name='registro'),
     path('login/', views.LoginView.as_view(), name='login'),
+    path('logout/', UserLogoutView.as_view(), name='logout'),
 
     # Opiniones
     path('pelicula/<slug:slug>/opinar/', CommentView.as_view(), name='comment'),

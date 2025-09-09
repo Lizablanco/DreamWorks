@@ -9,20 +9,14 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views import View
-from .models import Curiosidad, Genero, Movie, DescargaUsuarioPelicula, Opinion, OpinionGeneral
-from .forms  import CuriosidadForm, GeneroForm, MovieForm, DescargaForm, LoginForm
+from core.models import *
+from .forms  import CuriosidadForm, GeneroForm, MovieForm, DescargaForm, LoginForm, RegistroForm
 from django.db.models import Q
 from django.core.paginator import Paginator
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 # Create your views here.
-
-def index(request):
-    opiniones_generales = OpinionGeneral.objects.order_by('-fecha_registro')[:5]
-    return render(request, 'core/index.html', {
-        'opiniones_generales': opiniones_generales
-    })
-
 
 # vista para manejar cuando el archivo no esta disponible
 def archivo_no_disponible(request, slug):
@@ -46,22 +40,64 @@ def guardar_opinion_general(request):
 
 ###codigo de prueba
 ## Vista basada en clase para manejar el registro
-class RegisterView(View):
-    def get(self, request):
-        return render(request, 'core/modals.html')
-    def post(self, request):
-        pass
+class RegistroView(View):
+    template_name = 'core/index.html'
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('index')
+        form = RegistroForm()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('index')
+        form = RegistroForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            password1 = form.cleaned_data['password1']
+            password2 = form.cleaned_data['password2']
+
+            if password1 != password2:
+                return render(request, self.template_name, {
+                    'form': form,
+                    'error_message': 'Las contraseñas no coinciden'
+                })
+
+            if User.objects.filter(username=username).exists():
+                return render(request, self.template_name, {
+                    'form': form,
+                    'error_message': 'Ese nombre de usuario ya está en uso'
+                })
+
+            user = User.objects.create_user(username=username, email=email, password=password1)
+            user.save()
+            messages.success(request, 'Registro exitoso. Ahora puedes iniciar sesión.')
+            return redirect('login')  # Asegúrate de tener esta ruta definida
+
+        return render(request, self.template_name, {'form': form})
+
+# vista de logout
+class UserLogoutView(View):
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return redirect('login')
+
 
 ## Vista para manejar el inicio de sesion
 class LoginView(View):
     template_name= 'core/index.html'
     
     def get(self, request, *args, **kwasrgs):
-        
+        if request.user.is_authenticated:
+            return redirect('index')
         form= LoginForm()
         return render(request, self.template_name, {'form': form})
     
     def post(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('index')
         form =LoginForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
@@ -81,8 +117,10 @@ class LoginView(View):
                 
         return render(request, self.template_name, {'form': form})
 
+#
+
 ## Vista para manejar los comentarios
-class CommentView(View):
+class CommentView(LoginRequiredMixin,View):
     def post(self, request, slug):
         pelicula = get_object_or_404(Movie, slug=slug)
         descripcion = request.POST.get('descripcion', '').strip()
@@ -137,7 +175,7 @@ class CuriosidadUpdateView(View):
         return render(request, self.template_name, {'form': form, 'object': instancia})
 
 # Vista para eliminar una curiosidad
-class CuriosidadDeleteView(View):
+class CuriosidadDeleteView(LoginRequiredMixin, View):
     template_name = 'core/curiosidad_confirm_delete.html'
 
     def get(self, request, pk):
@@ -151,7 +189,7 @@ class CuriosidadDeleteView(View):
 
 
 # Vistas para CRUD de Generos
-class GeneroListView(View):
+class GeneroListView(LoginRequiredMixin, View):
     template_name = 'partials/genero_list.html'
     paginate_by=2
 
@@ -179,7 +217,7 @@ class GeneroListView(View):
         return render(request, self.template_name, context)
 
 # Vista para crear un nuevo genero
-class GeneroCreateView(View):
+class GeneroCreateView(LoginRequiredMixin, View):
     template_name = 'partials/genero_form.html'
 
     def get(self, request):
@@ -194,7 +232,7 @@ class GeneroCreateView(View):
         return render(request, self.template_name, {'form': form})
 
 # Vista para actualizar un genero existente
-class GeneroUpdateView(View):
+class GeneroUpdateView(LoginRequiredMixin, View):
     template_name = 'partials/genero_form.html'
 
     def get(self, request, pk):
@@ -217,7 +255,7 @@ class GeneroUpdateView(View):
         })
 
 # Vista para eliminar un genero
-class GeneroDeleteView(View):
+class GeneroDeleteView(LoginRequiredMixin, View):
     template_name = 'partials/genero_confirm_delete.html'
 
     def get(self, request, pk):
@@ -231,7 +269,7 @@ class GeneroDeleteView(View):
     
 
 # Vistas para CRUD de Peliculas
-class MovieListView(View):
+class MovieListView(LoginRequiredMixin, View):
     template_name = 'partials/movie_list.html'
 
     def get(self, request):
@@ -239,7 +277,7 @@ class MovieListView(View):
         return render(request, self.template_name, {'peliculas': peliculas})
 
 # Vista para crear una nueva pelicula
-class MovieCreateView(View):
+class MovieCreateView(LoginRequiredMixin, View):
     template_name = 'partials/movie_form.html'
 
     def get(self, request):
@@ -254,7 +292,7 @@ class MovieCreateView(View):
         return render(request, self.template_name, {'form': form})
 
 # Vista para actualizar una pelicula existente
-class MovieUpdateView(View):
+class MovieUpdateView(LoginRequiredMixin, View):
     template_name = 'partials/movie_form.html'
 
     def get(self, request, pk):
@@ -277,7 +315,7 @@ class MovieUpdateView(View):
         })
 
 # Vista para eliminar una pelicula
-class MovieDeleteView(View):
+class MovieDeleteView(LoginRequiredMixin, View):
     template_name = 'partials\movie_confirm_delet.html'
 
     def get(self, request, pk):
@@ -307,17 +345,18 @@ class PeliculaInfoView(View):
 
 # Vista para la pagina principal que muestra las peliculas mas recientes
 class IndexView(View):
-    template_name = 'core/index.html'
+    template_name = 'core/Index.html'
 
     def get(self, request):
+        opiniones_generales = OpinionGeneral.objects.order_by('-fecha_registro')[:5]
         peliculas = Movie.objects.all().order_by('-fecha_lanzamiento')
         return render(request, self.template_name, {
-            'peliculas': peliculas
+            'peliculas': peliculas, 'opiniones_generales': opiniones_generales
         })
 
 
 # Vistas para manejar las descargas de peliculas por usuarios
-class DescargaListView(View):
+class DescargaListView(LoginRequiredMixin, View):
     template_name = 'partials/descarga_list.html'
 
     def get(self, request):
@@ -344,7 +383,7 @@ def pelicula_descargar(request, slug):
     return FileResponse(pelicula.archivo.open(), as_attachment=True, filename=os.path.basename(pelicula.archivo.name))
 
 # para registrar una nueva descarga
-class DescargaCreateView(View):
+class DescargaCreateView(LoginRequiredMixin,View):
     template_name = 'partials/descarga_form.html'
 
     def get(self, request):
@@ -362,7 +401,7 @@ class DescargaCreateView(View):
         return render(request, self.template_name, {'form': form})
 
 # para eliminar una descarga (solo el dueño o staff)
-class DescargaDeleteView(View):
+class DescargaDeleteView(LoginRequiredMixin, View):
     template_name = 'partials/descarga_confirm_delete.html'
 
     def get(self, request, pk):

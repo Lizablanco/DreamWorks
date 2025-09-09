@@ -49,6 +49,7 @@ class MovieCuriosidadInline(admin.TabularInline):
 @admin.register(Movie)
 class MovieAdmin(admin.ModelAdmin):
     list_display = ('titulo', 'fecha_lanzamiento', 'slug')
+    list_per_page=4
     prepopulated_fields = {'slug': ('titulo',)}
     search_fields = ('titulo',)
     filter_horizontal = ('generos',)
@@ -77,6 +78,7 @@ class MovieAdmin(admin.ModelAdmin):
 @admin.register(DescargaUsuarioPelicula)
 class DescargaUsuarioPeliculaAdmin(admin.ModelAdmin):
     list_display       = ('user', 'movie', 'fecha_descarga')
+    list_per_page=4
     search_fields      = ('user__username', 'movie__titulo')
     list_filter        = ('fecha_descarga', 'movie')
     date_hierarchy     = 'fecha_descarga'
@@ -90,7 +92,10 @@ class DescargaUsuarioPeliculaAdmin(admin.ModelAdmin):
 @admin.register(Opinion)
 class OpinionAdmin(admin.ModelAdmin):
     list_display = ('user', 'movie', 'descripcion', 'fecha_registro')
+    list_per_page=4
     list_filter = ('movie', 'fecha_registro')
     search_fields = ('user__username', 'movie__titulo', 'descripcion')
     ordering = ('-fecha_registro',)
     raw_id_fields = ('user', 'movie')
+    
+#exclude = ('descripcion'), excluye un campo de la vista del admin

@@ -3,23 +3,21 @@
 <img src="{% static 'core/img/logoo.jpeg' %}" alt="DreamWorks Logo" class="logo">
     
     <div class="stars" id="stars"></div>
-    <div class="moon"></div>
+    <div class="moon"></div>    
     
     <!-- Navegador flotante -->
     <nav class="menu-medieval">
         <ul class="menu-lista">
-            <li>
-                <label for="registro-toggle">📜 Registrarse</label>
-            </li>
             <li><a href="#contacto">🌟Contacto</a></li>
             <li><a href="#comentarios">✍️ Opinión</a></li>
-            <li>
-            <label
-                for="login-toggle"
-                onclick="window.location.href='{% url 'login' %}'"
-                style="cursor: pointer;">"🔐 Iniciar Sesión
-            </label>
-            </li>
         </ul>
+        {% if user.is_authenticated %}
+            <p>¡Hola, {{ user.username }}! <a href="{% url 'logout' %}">Cerrar sesión</a></p>
+        {% else %}
+            <p><button onclick="document.getElementById('formulario-registro').style.display='block'">
+                <label for="registro-toggle">📜 Registrarse</label></button> | 
+                <button onclick="document.getElementById('formulario-login').style.display='block'">
+                <label for="login-toggle">📜 Login</label></button></p>
+        {% endif %}
     </nav>
 </header>

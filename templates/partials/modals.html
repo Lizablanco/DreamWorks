@@ -1,7 +1,6 @@
 {% load static %} 
-<!--------------------------------------------LOGIN---------------------------------------------------------- -->
-<input type="checkbox" id="login-toggle" style="display: none;">
-<div class="formulario-login" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1001; background: rgb(145, 122, 247); padding: 2rem; border: 3px solid #F5E7C1; border-radius: 10px; width: 300px;">
+<!-- ------------------------------------------LOGIN---------------------------------------------------------- -->
+<div id="formulario-login" class="formulario-login" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1001; background: rgb(145, 122, 247); padding: 2rem; border: 3px solid #F5E7C1; border-radius: 10px; width: 300px;">
     <h5 style="color: #F5E7C1; text-align: center;">Ingreso al Reino</h5>
     <form method="post" action="{% url 'login' %}">
         {% csrf_token %}
@@ -22,47 +21,38 @@
 <!------------------------------------------------------------------------------------------------------ -->
 
 <!-- Sistema de registro oculto -->
-<input type="checkbox" id="registro-toggle" style="display: none;">
-<div class="formulario-registro" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1001; background: rgb(145, 122, 247); padding: 2rem; border: 3px solid #F5E7C1; border-radius: 10px; width: 300px;">
-    <!-- contenido del formulario registro -->
-    <h5 style="color: #F5E7C1; text-align: center;">Registro del Reino</h5>
-    <form method="post" action="{% url 'register' %}" id="registro-form">
+<!-- Toggle oculto para activar el modal -->
+
+
+<!-- Modal de registro -->
+<div id="formulario-registro" class="formulario-registro" style="display: none;">
+    <h5 style="color: #F5E7C1; text-align: center;">Registro en el Reino</h5>
+    <form method="post" action="{% url 'registro' %}">
         {% csrf_token %}
         <div class="campo-formulario">
-            <label for="nombre">Nombre:</label>
-            <input type="text" id="nombre" name="nombre" required maxlength="50" pattern="[A-Za-zÁ-ú\s]+" minlength="3" title="Solo letras y espacios">
+            {{ form.username.label_tag }}
+            {{ form.username }}
         </div>
         <div class="campo-formulario">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
+            {{ form.email.label_tag }}
+            {{ form.email }}
         </div>
         <div class="campo-formulario">
-            <label for="password">Contraseña:</label>
-            <input type="password" id="password" name="password" required minlength="6">
-        </div> 
-        <button type="submit" class="boton-medieval">Unirse</button>
+            {{ form.password1.label_tag }}
+            {{ form.password1 }}
+        </div>
+        <div class="campo-formulario">
+            {{ form.password2.label_tag }}
+            {{ form.password2 }}
+        </div>
+        {% if error_message %}
+            <p style="color: red;">{{ error_message }}</p>
+        {% endif %}
+        <button type="submit" class="boton-medieval">Registrarse</button>
     </form>
 </div>
 
-<!-- Sistema de inicio de sesión login (oculto) -->
-<input type="checkbox" id="login-toggle" style="display: none;">
-<div class="formulario-login" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1001; background: rgb(145, 122, 247); padding: 2rem; border: 3px solid #F5E7C1; border-radius: 10px; width: 300px;">
-    <!-- contenido del formulario login -->
-    <h6 style="color: #F5E7C1; text-align: center;">Inicio de Sesión</h6>
-    <form method="post" action="{% url 'login' %}" id="login-form">
-        {% csrf_token %}
-        <div class="campo-formulario">
-            <label for="email-login">Email:</label>
-            <input type="email" id="email-login" name="email-login" required>
-        </div>
-        <div class="campo-formulario">
-            <label for="password-login">Contraseña:</label>
-            <input type="password" id="password-login" name="password-login" required minlength="6">
-        </div> 
-        <button type="submit" class="boton-medieval">Iniciar Sesión</button> <!-- Faltaba el botón de submit -->
-    </form>
-</div>
-
+{% if user.is_authenticated %}
 <!-- Sección de comentarios (flotante) -->
 <div id="comentarios-flotante">
   <h6>✍️ Tu opinión de la página</h6>
@@ -73,6 +63,7 @@
     <button type="submit" class="boton-medieval">Enviar</button>
   </form>
 </div>
+{% endif %}
 
 
 
