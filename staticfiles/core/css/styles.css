@@ -1,4 +1,3 @@
-
 /* cursor */
 html {
     cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><text x='0' y='28' font-size='28'>🪄</text></svg>"), auto;
@@ -491,6 +490,61 @@ textarea {
     opacity: 1;
 }
 
+/* botones y estilos de paginacion */
+/* Contenedor de paginación */
+.paginacion-pelicula {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1.05rem;
+}
+
+/* Enlaces de página (flechas o números clicables) */
+.paginacion-pelicula a {
+    display: inline-block;
+    margin: 0 6px;
+    padding: 6px 12px;
+    background: linear-gradient(to right, #6a00ff, #d4af37);
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+}
+
+.paginacion-pelicula a:hover {
+    transform: scale(1.1);
+}
+
+/* Texto “Página X de Y” en dorado suave */
+.paginacion-pelicula .pagina-info {
+    margin: 0 8px;
+    color: #f5c64f;
+    font-weight: bold;
+}
+
+/* Indicadores numéricos (si los usas en lugar de flechas) */
+.paginacion-pelicula .pagina-numero {
+    display: inline-block;
+    margin: 0 4px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    background: #f0f0f0;
+    color: #333;
+    text-decoration: none;
+    transition: background 0.2s ease;
+}
+
+.paginacion-pelicula .pagina-numero:hover {
+    background: #e0e0e0;
+}
+
+/* Página activa */
+.paginacion-pelicula .pagina-numero.actual {
+    background: linear-gradient(to right, #6a00ff, #d4af37);
+    color: #fff;
+    font-weight: bold;
+}
+
+
 footer {
     text-align: center;
     margin-top: 50px;
@@ -755,4 +809,17 @@ footer::before {
     .social-links {
         justify-content: center;
     }
+}
+
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 100px;
+}
+
+#paginacion-pelicula-anchor {
+    display: block;
+    position: relative;
+    top: -100px;
+    visibility: hidden;
 }

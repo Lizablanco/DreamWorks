@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+<section class="opiniones-generales">
+  <h4>🗣️ Todas las opiniones del Reino</h4>
+  {% for opinion in opiniones_generales %}
+    <blockquote>
+      “{{ opinion.descripcion }}”<br>
+      <small>— {{ opinion.user.username }} | {{ opinion.fecha_registro|date:"d M Y H:i" }}</small>
+    </blockquote>
+  {% empty %}
+    <p class="text-muted">Aún no hay opiniones registradas.</p>
+  {% endfor %}
+
+  {% if opiniones_generales.paginator.num_pages > 1 %}
+    <div class="paginacion">
+      {% if opiniones_generales.has_previous %}
+        <a href="?page={{ opiniones_generales.previous_page_number }}">←</a>
+      {% endif %}
+      <span>Página {{ opiniones_generales.number }} de {{ opiniones_generales.paginator.num_pages }}</span>
+      {% if opiniones_generales.has_next %}
+        <a href="?page={{ opiniones_generales.next_page_number }}">→</a>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div class="volver-al-inicio">
+    <a href="{% url 'index' %}" class="boton-medieval">← Volver al Reino</a>
+  </div>
+</section>
+{% endblock %}
+

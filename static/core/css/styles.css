@@ -313,6 +313,12 @@ html {
     padding-left: 1rem;
 }
 
+.fecha-opinion {
+    color: #d4af37;
+    font-style: italic;
+    margin-left: 8px;
+}
+
 
 /* Grid de películas*/
 .peliculas-grid {

@@ -1,17 +1,21 @@
-{% if user.is_authenticated %}
+
 <!-- Sección de comentarios (flotante) -->
-<div id="comentarios-flotante">
-  <h6>✍️ Tu opinión de la página</h6>
-  <form method="post" action="{% url 'comment_general' %}">
-    {% csrf_token %}
-    <textarea name="descripcion" placeholder="Máximo 50 caracteres" maxlength="50" required></textarea>
-    <div class="contador"><span id="chars-left">50</span> restantes</div>
-    <button type="submit" class="boton-medieval">Enviar</button>
-  </form>
-</div>
+{% if user.is_authenticated %}
+  <div id="comentarios-flotante">
+    <h6>✍️ Tu opinión de la página</h6>
+    <form method="post" action="{% url 'comment_general' %}">
+      {% csrf_token %}
+      <textarea
+        name="descripcion"
+        placeholder="Máximo 50 caracteres"
+        maxlength="50"
+        required></textarea>
+      <div class="contador"><span id="chars-left">50</span> restantes</div>
+      <button type="submit" class="boton-medieval">Enviar</button>
+    </form>
+  </div>
 {% endif %}
 
-<!-- Opiniones generales -->
 <section class="opiniones-generales">
   <h4>🗣️ Lo que dicen los visitantes del Reino</h4>
   {% for opinion in opiniones_generales %}
@@ -22,4 +26,10 @@
   {% empty %}
     <p class="text-muted">Sé el primero en dejar tu opinión sobre el Reino ✨</p>
   {% endfor %}
+
+  {% if mostrar_boton_ver_mas %}
+    <div class="ver-mas-container">
+      <a href="{% url 'opiniones_del_reino' %}" class="boton-medieval">Ver más opiniones</a>
+    </div>
+  {% endif %}
 </section>

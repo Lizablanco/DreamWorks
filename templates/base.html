@@ -53,6 +53,17 @@
             display: none !important;
         }
     </style>
+    <style>
+    /* 1. Transición suave en todo el documento */
+    html {
+      scroll-behavior: smooth;
+    }
+    /* 2. Cuando saltes a #paginacion-pelicula, deja 100px por encima */
+    #paginacion-pelicula {
+      scroll-margin-top: 100px; /* ajusta al alto de tu header */
+    }
+  </style>
+
     
 </head>
 <body>
@@ -76,6 +87,7 @@
     {% block content %}
     {% endblock %}
 </main>
+    {% block contenido %}{% endblock %}
 
 
     <!-- Footer -->
@@ -268,9 +280,56 @@ document.addEventListener('DOMContentLoaded', function() {
     {% endif %}
   });
 </script>
+    <script>
+  /**
+   * smoothScrollTo: anima el scroll desde startY hasta targetY
+   * con una función de easing “easeInOutQuad”.
+   */
+  function smoothScrollTo(startY, targetY, duration = 600) {
+    let startTime = null;
+    function easeInOutQuad(t) {
+      return t < 0.5
+        ? 2 * t * t
+        : -1 + (4 - 2 * t) * t;
+    }
+    function animate(time) {
+      if (startTime === null) startTime = time;
+      const elapsed = time - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = easeInOutQuad(progress);
+      window.scrollTo(
+        0,
+        startY + (targetY - startY) * eased
+      );
+      if (elapsed < duration) {
+        requestAnimationFrame(animate);
+      }
+    }
+    requestAnimationFrame(animate);
+  }
 
+  document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(location.search);
+    if (!params.has('page')) return;
 
-    
+    const pag = document.getElementById('paginacion-pelicula');
+    if (!pag) return;
+
+    // Calcula la posición destino: altura real de la paginación
+    const header = document.querySelector('header');
+    const headerH = header ? header.offsetHeight : 0;
+    const margin   = 20; // espacio extra
+    const targetY  = pag.getBoundingClientRect().top
+                     + window.pageYOffset
+                     - headerH
+                     - margin;
+    const startY   = window.pageYOffset;
+
+    // Lanza la animación
+    smoothScrollTo(startY, targetY, 600);
+  });
+</script>
+
     {% block extra_js %}
     {% endblock %}
 </body>

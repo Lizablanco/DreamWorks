@@ -10,7 +10,7 @@ from .views import (
     MovieListView, MovieCreateView, MovieUpdateView, MovieDeleteView,
     DescargaListView, DescargaCreateView, DescargaDeleteView,
     PeliculaInfoView, PeliculaDescargaView,
-    archivo_no_disponible, guardar_opinion_general, CommentView, LoginView, RegistroView, UserLogoutView,
+    archivo_no_disponible, guardar_opinion_general, CommentView, LoginView, RegistroView, UserLogoutView,OpinionesDelReinoView,
 )
 
 urlpatterns = [
@@ -31,6 +31,7 @@ urlpatterns = [
     # Opiniones
     path('pelicula/<slug:slug>/opinar/', CommentView.as_view(), name='comment'),
     path('opinion-general/', guardar_opinion_general, name='comment_general'),
+    path('opiniones/', OpinionesDelReinoView.as_view(), name='opiniones_del_reino'),
 
     # CRUD de Curiosidades
     path('curiosidades/', CuriosidadListView.as_view(), name='curiosidad_list'),

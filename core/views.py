@@ -46,58 +46,87 @@ def guardar_opinion_general(request):
 
     return redirect('index')
 
+#views de las opniones
+class OpinionesDelReinoView(View):
+    template_name = 'partials/opiniones_completas.html'
+
+    def get(self, request):
+        todas = OpinionGeneral.objects.order_by('-fecha_registro')
+        paginador = Paginator(todas, 10)  # 10 por página
+        pagina = request.GET.get('page')
+        opiniones = paginador.get_page(pagina)
+
+        return render(request, self.template_name, {
+            'opiniones_generales': opiniones
+        })
+
 
 ###codigo de prueba
 ## Vista basada en clase para manejar el registro
+GENERAL_OPINIONES_A_MOSTRAR = 3
+
 class RegistroView(View):
     template_name = 'core/index.html'
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return redirect('index')
-        opiniones_generales = OpinionGeneral.objects.order_by('-fecha_registro')[:5]
+
+        qs = OpinionGeneral.objects.order_by('-fecha_registro')
+        opiniones = qs[:GENERAL_OPINIONES_A_MOSTRAR]
+        mostrar_boton = qs.count() > GENERAL_OPINIONES_A_MOSTRAR
+
         return render(request, self.template_name, {
             'registro_form': RegistroForm(),
-            'login_form': LoginForm(), 
-            'opiniones_generales': opiniones_generales
+            'login_form':    LoginForm(),
+            'opiniones_generales':     opiniones,
+            'mostrar_boton_ver_mas':   mostrar_boton,
         })
 
     def post(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return redirect('index')
+
         form = RegistroForm(request.POST)
-        opiniones_generales = OpinionGeneral.objects.order_by('-fecha_registro')[:5]
+        qs = OpinionGeneral.objects.order_by('-fecha_registro')
+        opiniones = qs[:GENERAL_OPINIONES_A_MOSTRAR]
+        mostrar_boton = qs.count() > GENERAL_OPINIONES_A_MOSTRAR
+
         if form.is_valid():
-            username = form.cleaned_data['username']
-            email = form.cleaned_data['email']
-            password1 = form.cleaned_data['password1']
-            password2 = form.cleaned_data['password2']
+            u = form.cleaned_data['username']
+            e = form.cleaned_data['email']
+            p1 = form.cleaned_data['password1']
+            p2 = form.cleaned_data['password2']
 
-            if password1 != password2:
+            if p1 != p2:
                 return render(request, self.template_name, {
                     'registro_form': form,
-                    'login_form': LoginForm(),
-                    'opiniones_generales': opiniones_generales,
-                    'error_message': 'Las contraseñas no coinciden'
+                    'login_form':    LoginForm(),
+                    'opiniones_generales':     opiniones,
+                    'mostrar_boton_ver_mas':   mostrar_boton,
+                    'error_message': 'Las contraseñas no coinciden',
                 })
 
-            if User.objects.filter(username=username).exists():
+            if User.objects.filter(username=u).exists():
                 return render(request, self.template_name, {
                     'registro_form': form,
-                    'login_form': LoginForm(),
+                    'login_form':    LoginForm(),
+                    'opiniones_generales':     opiniones,
+                    'mostrar_boton_ver_mas':   mostrar_boton,
                     'error_message': 'Ese nombre de usuario ya está en uso',
-                    'opiniones_generales': opiniones_generales
                 })
 
-            User.objects.create_user(username=username, email=email, password=password1)
+            User.objects.create_user(username=u, email=e, password=p1)
             messages.success(request, 'Registro exitoso. Ahora puedes iniciar sesión.')
             return redirect('login')
 
         return render(request, self.template_name, {
             'registro_form': form,
-            'login_form': LoginForm(),
-            'opiniones_generales': opiniones_generales,
+            'login_form':    LoginForm(),
+            'opiniones_generales':     opiniones,
+            'mostrar_boton_ver_mas':   mostrar_boton,
         })
+
 
 # vista de logout
 class UserLogoutView(View):
@@ -109,65 +138,77 @@ class UserLogoutView(View):
 ## Vista para manejar el inicio de sesion
 class LoginView(View):
     template_name = 'core/index.html'
-    
+
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return redirect('index')
 
-        opiniones_generales = OpinionGeneral.objects.order_by('-fecha_registro')[:5]
+        qs = OpinionGeneral.objects.order_by('-fecha_registro')
+        opiniones = qs[:GENERAL_OPINIONES_A_MOSTRAR]
+        mostrar_boton = qs.count() > GENERAL_OPINIONES_A_MOSTRAR
 
         return render(request, self.template_name, {
-            'login_form': LoginForm(),
+            'login_form':   LoginForm(),
             'registro_form': RegistroForm(),
-            'opiniones_generales': opiniones_generales,
+            'opiniones_generales':     opiniones,
+            'mostrar_boton_ver_mas':   mostrar_boton,
         })
-    
+
     def post(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return redirect('index')
 
         form = LoginForm(request.POST)
-        opiniones_generales = OpinionGeneral.objects.order_by('-fecha_registro')[:5]
+        qs = OpinionGeneral.objects.order_by('-fecha_registro')
+        opiniones = qs[:GENERAL_OPINIONES_A_MOSTRAR]
+        mostrar_boton = qs.count() > GENERAL_OPINIONES_A_MOSTRAR
 
         if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            user = authenticate(request, username=username, password=password)
-
-            if user is not None:
+            u = form.cleaned_data['username']
+            p = form.cleaned_data['password']
+            user = authenticate(request, username=u, password=p)
+            if user:
                 login(request, user)
                 return redirect('index')
-            else:
-                messages.error(request, 'Nombre de usuario o contraseña incorrectos')
+            messages.error(request, 'Nombre de usuario o contraseña incorrectos')
         else:
             messages.error(request, 'Por favor corrige los errores del formulario')
 
         return render(request, self.template_name, {
-            'login_form': form,
+            'login_form':   form,
             'registro_form': RegistroForm(),
-            'opiniones_generales': opiniones_generales
+            'opiniones_generales':     opiniones,
+            'mostrar_boton_ver_mas':   mostrar_boton,
         })
 
 
 ## Vista para manejar los comentarios
 class CommentView(LoginRequiredMixin, View):
     def post(self, request, slug):
-        pelicula = get_object_or_404(Movie, slug=slug)
+        # 1) Recuperar película y descripción
+        pelicula   = get_object_or_404(Movie, slug=slug)
         descripcion = request.POST.get('descripcion', '').strip()
 
-        ya_opino = Opinion.objects.filter(user=request.user, movie=pelicula).exists()
+        if not descripcion:
+            messages.error(request, 'La opinión no puede estar vacía.')
+            return redirect('pelicula_info', slug=pelicula.slug)
 
-        if descripcion and not ya_opino:
-            Opinion.objects.create(
-                user=request.user,
-                movie=pelicula,
-                descripcion=descripcion
-            )
+        ya_opino = Opinion.objects.filter(
+            user=request.user,
+            movie=pelicula
+        ).exists()
+        if ya_opino:
+            messages.info(request, 'Ya has dejado tu opinión sobre esta película.')
+            return redirect('pelicula_info', slug=pelicula.slug)
 
-            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-                return JsonResponse({'status': 'ok', 'message': 'Opinión guardada ✨'})
-        
+        Opinion.objects.create(
+            user=request.user,
+            movie=pelicula,
+            descripcion=descripcion
+        )
+        messages.success(request, 'Opinión guardada correctamente ✨')
         return redirect('pelicula_info', slug=pelicula.slug)
+
 
 
 # Vistas para CRUD de Curiosidades
@@ -367,7 +408,14 @@ class MovieDeleteView(LoginRequiredMixin, View):
 class PeliculaInfoView(View):
     def get(self, request, slug):
         pelicula = get_object_or_404(Movie, slug=slug)
-        opiniones = Opinion.objects.filter(movie=pelicula).order_by('-fecha_registro')
+
+        # Opiniones paginadas
+        opiniones_qs = Opinion.objects.filter(movie=pelicula).order_by('-fecha_registro')
+        paginador = Paginator(opiniones_qs, 5)  # ← Cambia este número si quieres más o menos por página
+        pagina = request.GET.get('page')
+        opiniones = paginador.get_page(pagina)
+
+        # Verificar si el usuario ya opinó
         ya_opino = False
         if request.user.is_authenticated:
             ya_opino = Opinion.objects.filter(user=request.user, movie=pelicula).exists()
@@ -379,20 +427,28 @@ class PeliculaInfoView(View):
         })
 
 
+
 # Vista para la pagina principal que muestra las peliculas mas recientes
 class IndexView(View):
     template_name = 'core/index.html'
 
     def get(self, request):
-        request.session.pop('abrir_login', None)  
-        opiniones_generales = OpinionGeneral.objects.order_by('-fecha_registro')[:5]
+        request.session.pop('abrir_login', None)
+
+        todas_opiniones = OpinionGeneral.objects.order_by('-fecha_registro')
+        opiniones_visibles = todas_opiniones[:3]
+        mostrar_boton = todas_opiniones.count() > 3
+
         peliculas = Movie.objects.all().order_by('-fecha_lanzamiento')
+
         return render(request, self.template_name, {
             'peliculas': peliculas,
-            'opiniones_generales': opiniones_generales,
+            'opiniones_generales': opiniones_visibles,
+            'mostrar_boton_ver_mas': mostrar_boton,
             'registro_form': RegistroForm(),
             'login_form': LoginForm()
         })
+
 
 
 
