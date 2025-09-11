@@ -453,40 +453,38 @@ class IndexView(View):
 
 
 # Vistas para manejar las descargas de peliculas por usuarios
-@method_decorator(login_required(login_url='login'), name='dispatch')
-class DescargaListView(LoginRequiredMixin, View):
-    template_name = 'partials/descarga_list.html'
+class DescargaPeliculaView(LoginRequiredMixin, View):
+    login_url = 'login'
 
-    def pelicula_descargar(request, slug):
-        if not request.user.is_authenticated:
-            messages.error(request, 'Debes iniciar sesión para descargar esta película 🪄')
-            return redirect('login')
-
+    def get(self, request, slug):
         pelicula = get_object_or_404(Movie, slug=slug)
 
+        # Verificar que el archivo exista
         if not pelicula.archivo or not os.path.isfile(pelicula.archivo.path):
+            messages.error(request, 'El archivo de esta película no está disponible')
             return redirect(pelicula.get_absolute_url())
 
-        return FileResponse(pelicula.archivo.open(), as_attachment=True, filename=os.path.basename(pelicula.archivo.name))
+        # Verificar si el usuario ya descargó esta película
+        ya_descargo = DescargaUsuarioPelicula.objects.filter(
+            user=request.user,
+            movie=pelicula
+        ).exists()
 
-# Vista para manejar la descarga real del archivo
-def descargar_pelicula (request, slug):
-    if not request.user.is_authenticated:
-        messages.error(request, 'Debes iniciar sesión para descargar esta película 🌟')
-        request.session['abrir_login'] = True
-        return redirect('index')
+        if ya_descargo:
+            messages.info(request, 'Ya has descargado esta película anteriormente 🧙‍♀️')
+            return redirect(pelicula.get_absolute_url())
 
-    pelicula = get_object_or_404(Movie, slug=slug)
+        # Registrar la descarga
+        DescargaUsuarioPelicula.objects.create(user=request.user, movie=pelicula)
+        messages.success(request, 'Descarga completada ✨')
 
-    if not pelicula.archivo or not os.path.isfile(pelicula.archivo.path):
-        messages.error(request, 'El archivo de esta película no está disponible 🛡️')
-        return redirect(pelicula.get_absolute_url())
+        # Devolver el archivo
+        return FileResponse(
+            pelicula.archivo.open(),
+            as_attachment=True,
+            filename=os.path.basename(pelicula.archivo.name)
+        )
 
-    return FileResponse(
-        pelicula.archivo.open(),
-        as_attachment=True,
-        filename=os.path.basename(pelicula.archivo.name)
-    )
 
 
 
@@ -525,25 +523,11 @@ class DescargaDeleteView(LoginRequiredMixin, View):
             descarga.delete()
         return redirect('descarga_list')
 
-# vista para manejar la descarga real del archivo
-@method_decorator(login_required, name='dispatch')
-class PeliculaDescargaView(View):
-    def get(self, request, slug):
-        pelicula = get_object_or_404(Movie, slug=slug)
+class DescargaListView(LoginRequiredMixin, View):
+    template_name = 'partials/descarga_list.html'
 
-        # Verificar si el archivo existe físicamente
-        if not pelicula.archivo or not os.path.isfile(pelicula.archivo.path):
-            messages.warning(request, "Esta película no tiene archivo disponible para descarga.")
-            return redirect('archivo_no_disponible', slug=pelicula.slug)
+    def get(self, request):
+        descargas = DescargaUsuarioPelicula.objects.filter(user=request.user).order_by('-fecha_descarga')
+        return render(request, self.template_name, {'descargas': descargas})
 
-        # Registrar la descarga solo si no existe
-        if not DescargaUsuarioPelicula.objects.filter(user=request.user, movie=pelicula).exists():
-            DescargaUsuarioPelicula.objects.create(user=request.user, movie=pelicula)
-
-        # Entregar el archivo como descarga directa
-        return FileResponse(
-            pelicula.archivo.open(),
-            as_attachment=True,
-            filename=os.path.basename(pelicula.archivo.name)
-        )
 

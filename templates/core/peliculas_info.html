@@ -6,12 +6,13 @@
 {% block content %}
 <div class="container py-4">
 
+  <!-- Título -->
   <h1 class="mb-4 text-center">
     {{ pelicula.titulo }} ({{ pelicula.fecha_lanzamiento.year }})
   </h1>
 
+  <!-- Póster + Datos -->
   <div class="row justify-content-center align-items-start mb-5">
-    <!-- Póster -->
     <div class="col-md-5 poster-container text-center">
       <img
         src="{% static 'core/posters/'|add:pelicula.slug|add:'.jpg' %}"
@@ -20,7 +21,6 @@
         onerror="this.onerror=null;this.src='{% static 'core/img/default-poster.jpg' %}';">
     </div>
 
-    <!-- Datos de la película -->
     <div class="col-md-7">
       <div class="info-frame p-4">
         {% if pelicula.descripcion %}
@@ -42,10 +42,7 @@
         {% endif %}
 
         {% if pelicula.enlace_externo %}
-          <a
-            href="{{ pelicula.enlace_externo }}"
-            class="btn btn-warning me-2"
-            target="_blank">
+          <a href="{{ pelicula.enlace_externo }}" class="btn btn-warning me-2" target="_blank">
             Ver película en línea
           </a>
         {% endif %}
@@ -58,7 +55,55 @@
 
   <hr>
 
-  <!-- Formulario de opinión personal -->
+  <!-- Géneros, Curiosidades, Descargas -->
+  <div class="row g-4 mb-5">
+    <div class="col-md-4">
+      <div class="info-frame">
+        <h2>Géneros</h2>
+        <ul>
+          {% for genero in pelicula.generos.all %}
+            <li>
+              <strong>{{ genero.nombre }}</strong><br>
+              <small class="text-muted">{{ genero.descripcion }}</small>
+            </li>
+          {% empty %}
+            <li class="text-muted">Sin géneros asignados.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="info-frame">
+        <h2>Curiosidades</h2>
+        <ul>
+          {% for curiosidad in pelicula.curiosidades.all %}
+            <li><strong>{{ curiosidad.titulo }}</strong>: {{ curiosidad.descripcion }}</li>
+          {% empty %}
+            <li class="text-muted">No hay curiosidades registradas.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="info-frame">
+        <h2>Descargas</h2>
+        <ul>
+          {% for descarga in pelicula.descargas.all %}
+            <li>
+              {{ descarga.user.username }}
+              <small class="text-muted">– {{ descarga.fecha_descarga|date:"d M Y H:i" }}</small>
+            </li>
+          {% empty %}
+            <li class="text-muted">No se han registrado descargas.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulario de opinión -->
   <div class="info-frame mt-4">
     <h2>Opinión</h2>
     {% if user.is_authenticated %}
@@ -67,14 +112,8 @@
       {% else %}
         <form method="post" action="{% url 'comment' pelicula.slug %}">
           {% csrf_token %}
-          <textarea
-            name="descripcion"
-            class="form-control mb-2"
-            placeholder="Escribe tu opinión..."
-            required></textarea>
-          <button type="submit" class="btn btn-opinion mt-2">
-            Enviar opinión
-          </button>
+          <textarea name="descripcion" class="form-control mb-2" placeholder="Escribe tu opinión..." required></textarea>
+          <button type="submit" class="btn btn-opinion mt-2">Enviar opinión</button>
         </form>
       {% endif %}
     {% else %}
@@ -82,10 +121,9 @@
     {% endif %}
   </div>
 
-  <!-- Listado y paginación de opiniones -->
+  <!-- Opiniones y paginación -->
   <div class="info-frame mt-4">
     <h2>Opiniones de otros usuarios</h2>
-
     {% if opiniones %}
       <ul>
         {% for opinion in opiniones %}
@@ -100,23 +138,11 @@
       {% if opiniones.paginator.num_pages > 1 %}
         <div id="paginacion-pelicula" class="paginacion-pelicula">
           {% if opiniones.has_previous %}
-            <a
-              href="?page={{ opiniones.previous_page_number }}"
-              class="boton-medieval me-2">
-              ← Anterior
-            </a>
+            <a href="?page={{ opiniones.previous_page_number }}" class="boton-medieval me-2">← Anterior</a>
           {% endif %}
-
-          <span class="pagina-info">
-            Página {{ opiniones.number }} de {{ opiniones.paginator.num_pages }}
-          </span>
-
+          <span class="pagina-info">Página {{ opiniones.number }} de {{ opiniones.paginator.num_pages }}</span>
           {% if opiniones.has_next %}
-            <a
-              href="?page={{ opiniones.next_page_number }}"
-              class="boton-medieval ms-2">
-              Siguiente →
-            </a>
+            <a href="?page={{ opiniones.next_page_number }}" class="boton-medieval ms-2">Siguiente →</a>
           {% endif %}
         </div>
       {% endif %}
@@ -126,15 +152,16 @@
   </div>
 
   <!-- Botones finales -->
-  <div class="volver-al-inicio text-center mt-4">
-    <a
-      href="{% url 'pelicula_descargar' pelicula.slug %}"
-      class="btn btn-success btn-download me-2">
-      Descargar película
-    </a>
-    <a
-      href="{% url 'index' %}"
-      class="boton-medieval">
+  <div class="text-center mt-4">
+    {% if descargada %}
+  <button class="btn btn-secondary" disabled>Ya descargada ✨</button>
+{% else %}
+  <a href="{% url 'pelicula_descargar' pelicula.slug %}" class="btn btn-success btn-download me-2">
+    Descargar película
+  </a>
+{% endif %}
+
+    <a href="{% url 'index' %}" class="boton-medieval">
       ← Volver al Reino
     </a>
   </div>
@@ -144,7 +171,6 @@
 
 {% block extra_js %}
 <script>
-  // easing “easeInOutQuad” y scroll animado
   function smoothScrollTo(startY, targetY, duration = 600) {
     let startTime = null;
     function easeInOutQuad(t) {

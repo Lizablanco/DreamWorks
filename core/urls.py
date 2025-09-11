@@ -9,7 +9,7 @@ from .views import (
     GeneroListView, GeneroCreateView, GeneroUpdateView, GeneroDeleteView,
     MovieListView, MovieCreateView, MovieUpdateView, MovieDeleteView,
     DescargaListView, DescargaCreateView, DescargaDeleteView,
-    PeliculaInfoView, PeliculaDescargaView,
+    PeliculaInfoView, DescargaPeliculaView,
     archivo_no_disponible, guardar_opinion_general, CommentView, LoginView, RegistroView, UserLogoutView,OpinionesDelReinoView,
 )
 
@@ -58,7 +58,7 @@ urlpatterns = [
 
     # Información y acciones sobre películas
     path('pelicula/<slug:slug>/', PeliculaInfoView.as_view(), name='pelicula_info'),
-    path('descargar/<slug:slug>/', PeliculaDescargaView.as_view(), name='pelicula_descargar'),
+    path('descargar/<slug:slug>/', DescargaPeliculaView.as_view(), name='pelicula_descargar'),
 
     # Página de error si no hay archivo disponible
     path('DreamWorks/pelicula/<slug:slug>/archivo-no-disponible/', archivo_no_disponible, name='archivo_no_disponible'),
