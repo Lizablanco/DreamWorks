@@ -3,16 +3,32 @@
 <h2>Registro</h2>
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    
+    <!-- Campos manuales - SIN form.as_p -->
+    <div class="campo-formulario">
+        <label for="id_username">Nombre de usuario:</label>
+        <input type="text" name="username" id="id_username" class="form-control" 
+               placeholder="Elige un nombre de usuario" required value="{{ request.POST.username }}">
+    </div>
+    
+    <div class="campo-formulario">
+        <label for="id_email">Correo electrónico:</label>
+        <input type="email" name="email" id="id_email" class="form-control" 
+               placeholder="Tu correo electrónico" required value="{{ request.POST.email }}">
+    </div>
+    
+    <div class="campo-formulario">
+        <label for="id_password1">Contraseña:</label>
+        <input type="password" name="password1" id="id_password1" class="form-control" 
+               placeholder="Crea una contraseña" required>
+    </div>
+    
+    <div class="campo-formulario">
+        <label for="id_password2">Confirmar contraseña:</label>
+        <input type="password" name="password2" id="id_password2" class="form-control" 
+               placeholder="Repite la contraseña" required>
+    </div>
+    
     <button type="submit" class="boton-medieval">Registrarse</button>
 </form>
-{% if messages %}
-  <div class="mensaje-flotante">
-    {% for message in messages %}
-      <p class="mensaje-{{ message.tags }}">{{ message }}</p>
-    {% endfor %}
-  </div>
-{% endif %}
-
 {% endblock %}
-

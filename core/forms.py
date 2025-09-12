@@ -128,35 +128,46 @@ class DescargaForm(forms.ModelForm):
             pendientes = DescargaUsuarioPelicula.objects.filter(user=user).values_list('movie_id', flat=True)
             self.fields['movie'].queryset = Movie.objects.exclude(pk__in=pendientes)
 
-#login
-class LoginForm(forms.Form):
-    username = forms.CharField(
-        label="Nombre de usuario",
-        max_length=150,
-        widget=forms.TextInput(attrs={'placeholder': 'Tu nombre de usuario'})
-    )
-    password = forms.CharField (
-        label = 'contraseña',
-        widget = forms.PasswordInput(attrs={'placeholder': "Tu contraseña"})
-    )
-
-#sistema de registro
+#registro
 class RegistroForm(forms.Form):
     username = forms.CharField(
-        label="Nombre de usuario",
         max_length=150,
-        widget=forms.TextInput(attrs={'placeholder': 'Elige un nombre de usuario'})
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Elige un nombre de usuario',
+            'class': 'form-control'
+        })
     )
     email = forms.EmailField(
-        label="Correo electrónico",
-        widget=forms.EmailInput(attrs={'placeholder': 'Tu correo electrónico'})
+        widget=forms.EmailInput(attrs={
+            'placeholder': 'Tu correo electrónico',
+            'class': 'form-control'
+        })
     )
     password1 = forms.CharField(
-        label="Contraseña",
-        widget=forms.PasswordInput(attrs={'placeholder': 'Crea una contraseña'})
+        widget=forms.PasswordInput(attrs={
+            'placeholder': 'Crea una contraseña',
+            'class': 'form-control'
+        })
     )
     password2 = forms.CharField(
-        label="Confirmar contraseña",
-        widget=forms.PasswordInput(attrs={'placeholder': 'Repite la contraseña'})
+        widget=forms.PasswordInput(attrs={
+            'placeholder': 'Repite la contraseña',
+            'class': 'form-control'
+        })
+    )
+
+# login
+class LoginForm(forms.Form):
+    username = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Tu nombre de usuario',
+            'class': 'form-control'
+        })
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'placeholder': "Tu contraseña",
+            'class': 'form-control'
+        })
     )
 

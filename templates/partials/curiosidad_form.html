@@ -1,3 +1,5 @@
+{% extends 'base.html' %}
+{% block content %}
 <form method="post">
   {% csrf_token %}
   {{ form.non_field_errors }}
@@ -19,3 +21,4 @@
   </button>
   <a href="{% url 'curiosidad_list' %}" class="btn btn-link">Cancelar</a>
 </form>
+{% endblock %}

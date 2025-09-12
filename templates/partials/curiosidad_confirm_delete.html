@@ -1,6 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
 <form method="post">
   {% csrf_token %}
   <p>¿Eliminar la curiosidad «{{ object.titulo }}»? Esta acción no se puede deshacer.</p>
   <button type="submit" class="btn btn-danger">Confirmar borrado</button>
   <a href="{% url 'curiosidad_list' %}" class="btn btn-link">Cancelar</a>
 </form>
+{% endblock %}

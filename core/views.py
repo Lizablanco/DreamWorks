@@ -1,9 +1,8 @@
 from django.conf import settings
 from django.http import HttpResponse, FileResponse, Http404
 import os
-from django.http import FileResponse
 from django.contrib import messages
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, PermissionDenied
 from django.views.generic import TemplateView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -15,10 +14,10 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib import messages
+from django.db import IntegrityError, DatabaseError
+
 
 # Create your views here.
-
 
 # vista para manejar cuando el archivo no esta disponible
 def archivo_no_disponible(request, slug):
@@ -52,7 +51,7 @@ class OpinionesDelReinoView(View):
 
     def get(self, request):
         todas = OpinionGeneral.objects.order_by('-fecha_registro')
-        paginador = Paginator(todas, 10)  # 10 por página
+        paginador = Paginator(todas, 10)
         pagina = request.GET.get('page')
         opiniones = paginador.get_page(pagina)
 
@@ -78,63 +77,67 @@ class RegistroView(View):
 
         return render(request, self.template_name, {
             'registro_form': RegistroForm(),
-            'login_form':    LoginForm(),
-            'opiniones_generales':     opiniones,
-            'mostrar_boton_ver_mas':   mostrar_boton,
+            'login_form': LoginForm(),
+            'opiniones_generales': opiniones,
+            'mostrar_boton_ver_mas': mostrar_boton,
         })
 
     def post(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return redirect('index')
 
-        form = RegistroForm(request.POST)
+        # Obtener datos directamente del request
+        username = request.POST.get('username', '').strip()
+        email = request.POST.get('email', '').strip()
+        password1 = request.POST.get('password1', '')
+        password2 = request.POST.get('password2', '')
+
         qs = OpinionGeneral.objects.order_by('-fecha_registro')
         opiniones = qs[:GENERAL_OPINIONES_A_MOSTRAR]
         mostrar_boton = qs.count() > GENERAL_OPINIONES_A_MOSTRAR
 
-        if form.is_valid():
-            u = form.cleaned_data['username']
-            e = form.cleaned_data['email']
-            p1 = form.cleaned_data['password1']
-            p2 = form.cleaned_data['password2']
+        # Validaciones manuales SIMPLES
+        errors = []
+        
+        if not all([username, email, password1, password2]):
+            messages.error(request, '❌ Todos los campos son obligatorios')
+            return self.render_with_context(request, opiniones, mostrar_boton)
+        
+        if password1 != password2:
+            messages.error(request, '🔒 Las contraseñas no coinciden')
+            return self.render_with_context(request, opiniones, mostrar_boton)
+        
+        if User.objects.filter(username=username).exists():
+            messages.error(request, '👤 Este nombre de usuario ya está en uso')
+            return self.render_with_context(request, opiniones, mostrar_boton)
+        
+        if User.objects.filter(email=email).exists():
+            messages.error(request, '📧 Este correo electrónico ya está registrado')
+            return self.render_with_context(request, opiniones, mostrar_boton)
 
-            if p1 != p2:
-                return render(request, self.template_name, {
-                    'registro_form': form,
-                    'login_form':    LoginForm(),
-                    'opiniones_generales':     opiniones,
-                    'mostrar_boton_ver_mas':   mostrar_boton,
-                    'error_message': 'Las contraseñas no coinciden',
-                })
-
-            if User.objects.filter(username=u).exists():
-                return render(request, self.template_name, {
-                    'registro_form': form,
-                    'login_form':    LoginForm(),
-                    'opiniones_generales':     opiniones,
-                    'mostrar_boton_ver_mas':   mostrar_boton,
-                    'error_message': 'Ese nombre de usuario ya está en uso',
-                })
-
-            User.objects.create_user(username=u, email=e, password=p1)
-            messages.success(request, 'Registro exitoso. Ahora puedes iniciar sesión.')
+        # Crear usuario
+        try:
+            User.objects.create_user(username=username, email=email, password=password1)
+            messages.success(request, '✨ ¡Registro exitoso! Ahora puedes iniciar sesión.')
             return redirect('login')
+        except Exception as e:
+            messages.error(request, '❌ Error al crear el usuario. Inténtalo de nuevo.')
+            return self.render_with_context(request, opiniones, mostrar_boton)
 
+    def render_with_context(self, request, opiniones, mostrar_boton):
+        """Método helper para renderizar con el contexto"""
         return render(request, self.template_name, {
-            'registro_form': form,
-            'login_form':    LoginForm(),
-            'opiniones_generales':     opiniones,
-            'mostrar_boton_ver_mas':   mostrar_boton,
+            'registro_form': RegistroForm(),
+            'login_form': LoginForm(),
+            'opiniones_generales': opiniones,
+            'mostrar_boton_ver_mas': mostrar_boton,
         })
 
-
-# vista de logout
 class UserLogoutView(View):
     def get(self, request, *args, **kwargs):
         logout(request)
         return redirect('login')
-
-
+    
 ## Vista para manejar el inicio de sesion
 class LoginView(View):
     template_name = 'core/index.html'
@@ -169,13 +172,14 @@ class LoginView(View):
             user = authenticate(request, username=u, password=p)
             if user:
                 login(request, user)
+                messages.success(request, '🎉 ¡Bienvenido de nuevo!')
                 return redirect('index')
-            messages.error(request, 'Nombre de usuario o contraseña incorrectos')
+            messages.error(request, '❌ Nombre de usuario o contraseña incorrectos')
         else:
-            messages.error(request, 'Por favor corrige los errores del formulario')
+            messages.error(request, '❌ Por favor corrige los errores del formulario')
 
         return render(request, self.template_name, {
-            'login_form':   form,
+            'login_form':   LoginForm(),  # Formulario limpio
             'registro_form': RegistroForm(),
             'opiniones_generales':     opiniones,
             'mostrar_boton_ver_mas':   mostrar_boton,
@@ -185,43 +189,77 @@ class LoginView(View):
 ## Vista para manejar los comentarios
 class CommentView(LoginRequiredMixin, View):
     def post(self, request, slug):
-        # 1) Recuperar película y descripción
-        pelicula   = get_object_or_404(Movie, slug=slug)
-        descripcion = request.POST.get('descripcion', '').strip()
+        try:
+            pelicula = get_object_or_404(Movie, slug=slug)
+            descripcion = request.POST.get('descripcion', '').strip()
 
-        if not descripcion:
-            messages.error(request, 'La opinión no puede estar vacía.')
+            if not descripcion:
+                messages.error(request, '❌ La opinión no puede estar vacía.')
+                return redirect('pelicula_info', slug=pelicula.slug)
+
+            ya_opino = Opinion.objects.filter(user=request.user, movie=pelicula).exists()
+            
+            if ya_opino:
+                messages.info(request, 'ℹ️ Ya has dejado tu opinión sobre esta película.')
+                return redirect('pelicula_info', slug=pelicula.slug)
+
+            try:
+                Opinion.objects.create(user=request.user, movie=pelicula, descripcion=descripcion)
+                messages.success(request, '✅ Opinión guardada correctamente ✨')
+            except IntegrityError:
+                messages.error(request, '❌ Error al guardar tu opinión')
+            except DatabaseError:
+                messages.error(request, '❌ Error de base de datos. Intenta más tarde.')
+                
             return redirect('pelicula_info', slug=pelicula.slug)
+            
+        except Exception as e:
+            messages.error(request, '❌ Error inesperado')
+            return redirect('index')
 
-        ya_opino = Opinion.objects.filter(
-            user=request.user,
-            movie=pelicula
-        ).exists()
-        if ya_opino:
-            messages.info(request, 'Ya has dejado tu opinión sobre esta película.')
-            return redirect('pelicula_info', slug=pelicula.slug)
-
-        Opinion.objects.create(
-            user=request.user,
-            movie=pelicula,
-            descripcion=descripcion
-        )
-        messages.success(request, 'Opinión guardada correctamente ✨')
-        return redirect('pelicula_info', slug=pelicula.slug)
-
-
+# vistas de errores
+class StaffRequiredMixin:
+    error_messages = {
+        'delete': '⚔️ Solo los archimagos del reino pueden eliminar este elemento.',
+        'create': '🔮 Solo los escribas reales pueden crear nuevos elementos.',
+        'edit': '📜 Solo los cronistas del reino pueden modificar este elemento.',
+        'view': ' Solo los visionarios del staff pueden ver este elemento.',
+        'default': '❌ Acceso restringido al personal del reino.'
+    }
+    
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_staff:
+            action = self.get_action_type(request)
+            message = self.error_messages.get(action, self.error_messages['default'])
+            messages.error(request, message)
+            return redirect('index') 
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_action_type(self, request):
+        path = request.path.lower()
+        
+        if 'borrar' in path or 'delete' in path:
+            return 'delete'
+        elif 'editar' in path or 'edit' in path:
+            return 'edit'
+        elif 'nuevo' in path or 'crear' in path or 'create' in path or 'add' in path:
+            return 'create'
+        elif 'ver' in path or 'view' in path or 'detalle' in path:
+            return 'view'
+        else:
+            return 'default'
 
 # Vistas para CRUD de Curiosidades
 class CuriosidadListView(View):
-    template_name = 'core/curiosidad_list.html'
+    template_name = 'partials/curiosidad_list.html'
 
     def get(self, request):
         curiosidades = Curiosidad.objects.all().order_by('-id')
         return render(request, self.template_name, {'curiosidades': curiosidades})
 
 # Vista para crear una nueva curiosidad
-class CuriosidadCreateView(View):
-    template_name = 'core/curiosidad_form.html'
+class CuriosidadCreateView(StaffRequiredMixin, LoginRequiredMixin, View):
+    template_name = 'partials/curiosidad_form.html'
 
     def get(self, request):
         form = CuriosidadForm()
@@ -231,12 +269,14 @@ class CuriosidadCreateView(View):
         form = CuriosidadForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, '✅ Curiosidad creada exitosamente')
             return redirect('curiosidad_list')
-        return render(request, self.template_name, {'form': form})
+        messages.error(request, '❌ Error al crear la curiosidad')
+        return render(request, self.template_name, {'form': CuriosidadForm()})
 
 # Vista para actualizar una curiosidad existente
-class CuriosidadUpdateView(View):
-    template_name = 'core/curiosidad_form.html'
+class CuriosidadUpdateView(StaffRequiredMixin, LoginRequiredMixin, View):
+    template_name = 'partials/curiosidad_form.html'
 
     def get(self, request, pk):
         instancia = get_object_or_404(Curiosidad, pk=pk)
@@ -248,12 +288,14 @@ class CuriosidadUpdateView(View):
         form = CuriosidadForm(request.POST, instance=instancia)
         if form.is_valid():
             form.save()
+            messages.success(request, '✅ Curiosidad actualizada exitosamente')
             return redirect('curiosidad_list')
+        messages.error(request, '❌ Error al actualizar la curiosidad')
         return render(request, self.template_name, {'form': form, 'object': instancia})
 
 # Vista para eliminar una curiosidad
-class CuriosidadDeleteView(LoginRequiredMixin, View):
-    template_name = 'core/curiosidad_confirm_delete.html'
+class CuriosidadDeleteView(StaffRequiredMixin, LoginRequiredMixin, View):
+    template_name = 'partials/curiosidad_confirm_delete.html'
 
     def get(self, request, pk):
         instancia = get_object_or_404(Curiosidad, pk=pk)
@@ -262,13 +304,14 @@ class CuriosidadDeleteView(LoginRequiredMixin, View):
     def post(self, request, pk):
         instancia = get_object_or_404(Curiosidad, pk=pk)
         instancia.delete()
+        messages.success(request, '✅ Curiosidad eliminada exitosamente')
         return redirect('curiosidad_list')
 
 
 # Vistas para CRUD de Generos
 class GeneroListView(LoginRequiredMixin, View):
     template_name = 'partials/genero_list.html'
-    paginate_by=2
+    paginate_by = 2
 
     def get(self, request):
         generos = Genero.objects.all().order_by('nombre')
@@ -281,9 +324,9 @@ class GeneroListView(LoginRequiredMixin, View):
                 Q(descripcion__icontains=query)
             ).distinct()
             
-        paginator= Paginator(generos, self.paginate_by)
+        paginator = Paginator(generos, self.paginate_by)
         page_number = request.GET.get('page')
-        page_obj= paginator.get_page(page_number)
+        page_obj = paginator.get_page(page_number)
         
         context = {
             'page_obj': page_obj,
@@ -294,7 +337,7 @@ class GeneroListView(LoginRequiredMixin, View):
         return render(request, self.template_name, context)
 
 # Vista para crear un nuevo genero
-class GeneroCreateView(LoginRequiredMixin, View):
+class GeneroCreateView(StaffRequiredMixin, LoginRequiredMixin, View):
     template_name = 'partials/genero_form.html'
 
     def get(self, request):
@@ -305,11 +348,13 @@ class GeneroCreateView(LoginRequiredMixin, View):
         form = GeneroForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, '✅ Género creado exitosamente')
             return redirect('genero_list')
-        return render(request, self.template_name, {'form': form})
+        messages.error(request, '❌ Error al crear el género')
+        return render(request, self.template_name, {'form': GeneroForm()})
 
 # Vista para actualizar un genero existente
-class GeneroUpdateView(LoginRequiredMixin, View):
+class GeneroUpdateView(StaffRequiredMixin, LoginRequiredMixin, View):
     template_name = 'partials/genero_form.html'
 
     def get(self, request, pk):
@@ -325,14 +370,16 @@ class GeneroUpdateView(LoginRequiredMixin, View):
         form = GeneroForm(request.POST, instance=instancia)
         if form.is_valid():
             form.save()
+            messages.success(request, '✅ Género actualizado exitosamente')
             return redirect('genero_list')
+        messages.error(request, '❌ Error al actualizar el género')
         return render(request, self.template_name, {
             'form': form,
             'object': instancia
         })
 
 # Vista para eliminar un genero
-class GeneroDeleteView(LoginRequiredMixin, View):
+class GeneroDeleteView(StaffRequiredMixin, LoginRequiredMixin, View):
     template_name = 'partials/genero_confirm_delete.html'
 
     def get(self, request, pk):
@@ -342,6 +389,7 @@ class GeneroDeleteView(LoginRequiredMixin, View):
     def post(self, request, pk):
         instancia = get_object_or_404(Genero, pk=pk)
         instancia.delete()
+        messages.success(request, '✅ Género eliminado exitosamente')
         return redirect('genero_list')
     
 
@@ -353,8 +401,24 @@ class MovieListView(LoginRequiredMixin, View):
         peliculas = Movie.objects.all().order_by('-fecha_lanzamiento')
         return render(request, self.template_name, {'peliculas': peliculas})
 
-# Vista para crear una nueva pelicula
-class MovieCreateView(LoginRequiredMixin, View):
+
+
+# vista para eliminar
+class MovieDeleteView(StaffRequiredMixin, LoginRequiredMixin, View):
+    template_name = 'partials/movie_confirm_delete.html'
+
+    def get(self, request, pk):
+        instancia = get_object_or_404(Movie, pk=pk)
+        return render(request, self.template_name, {'object': instancia})
+
+    def post(self, request, pk):
+        instancia = get_object_or_404(Movie, pk=pk)
+        instancia.delete()
+        messages.success(request, '✨ La película ha sido enviada al olvido mágico.')
+        return redirect('movie_list')
+
+#vista para crear
+class MovieCreateView(StaffRequiredMixin, LoginRequiredMixin, View):
     template_name = 'partials/movie_form.html'
 
     def get(self, request):
@@ -365,11 +429,13 @@ class MovieCreateView(LoginRequiredMixin, View):
         form = MovieForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
+            messages.success(request, '🎬 ¡Nueva película añadida al reino!')
             return redirect('movie_list')
-        return render(request, self.template_name, {'form': form})
+        messages.error(request, '❌ Error al crear la película')
+        return render(request, self.template_name, {'form': MovieForm()})
 
-# Vista para actualizar una pelicula existente
-class MovieUpdateView(LoginRequiredMixin, View):
+#vista para actualizar
+class MovieUpdateView(StaffRequiredMixin, LoginRequiredMixin, View):
     template_name = 'partials/movie_form.html'
 
     def get(self, request, pk):
@@ -385,37 +451,24 @@ class MovieUpdateView(LoginRequiredMixin, View):
         form = MovieForm(request.POST, request.FILES, instance=instancia)
         if form.is_valid():
             form.save()
+            messages.success(request, '📝 Película actualizada con éxito.')
             return redirect('movie_list')
+        messages.error(request, '❌ Error al actualizar la película')
         return render(request, self.template_name, {
             'form': form,
             'object': instancia
         })
-
-# Vista para eliminar una pelicula
-class MovieDeleteView(LoginRequiredMixin, View):
-    template_name = 'partials\movie_confirm_delet.html'
-
-    def get(self, request, pk):
-        instancia = get_object_or_404(Movie, pk=pk)
-        return render(request, self.template_name, {'object': instancia})
-
-    def post(self, request, pk):
-        instancia = get_object_or_404(Movie, pk=pk)
-        instancia.delete()
-        return redirect('movie_list')
 
 # Vista para mostrar la informacion y detalles de una pelicula
 class PeliculaInfoView(View):
     def get(self, request, slug):
         pelicula = get_object_or_404(Movie, slug=slug)
 
-        # Opiniones paginadas
         opiniones_qs = Opinion.objects.filter(movie=pelicula).order_by('-fecha_registro')
-        paginador = Paginator(opiniones_qs, 5)  # ← Cambia este número si quieres más o menos por página
+        paginador = Paginator(opiniones_qs, 5)
         pagina = request.GET.get('page')
         opiniones = paginador.get_page(pagina)
 
-        # Verificar si el usuario ya opinó
         ya_opino = False
         if request.user.is_authenticated:
             ya_opino = Opinion.objects.filter(user=request.user, movie=pelicula).exists()
@@ -425,7 +478,6 @@ class PeliculaInfoView(View):
             'opiniones': opiniones,
             'ya_opino': ya_opino
         })
-
 
 
 # Vista para la pagina principal que muestra las peliculas mas recientes
@@ -450,50 +502,47 @@ class IndexView(View):
         })
 
 
-
-
 # Vistas para manejar las descargas de peliculas por usuarios
 class DescargaPeliculaView(LoginRequiredMixin, View):
     login_url = 'login'
 
     def get(self, request, slug):
-        pelicula = get_object_or_404(Movie, slug=slug)
+        try:
+            pelicula = get_object_or_404(Movie, slug=slug)
 
-        # Verificar que el archivo exista
-        if not pelicula.archivo or not os.path.isfile(pelicula.archivo.path):
-            messages.error(request, 'El archivo de esta película no está disponible')
-            return redirect(pelicula.get_absolute_url())
+            if not pelicula.archivo or not os.path.isfile(pelicula.archivo.path):
+                return redirect('archivo_no_disponible', slug=pelicula.slug)
 
-        # Verificar si el usuario ya descargó esta película
-        ya_descargo = DescargaUsuarioPelicula.objects.filter(
-            user=request.user,
-            movie=pelicula
-        ).exists()
+            ya_descargo = DescargaUsuarioPelicula.objects.filter(user=request.user, movie=pelicula).exists()
 
-        if ya_descargo:
-            messages.info(request, 'Ya has descargado esta película anteriormente 🧙‍♀️')
-            return redirect(pelicula.get_absolute_url())
+            if ya_descargo:
+                messages.info(request, '📦 Ya has descargado esta película anteriormente 🧙‍♀️')
+                return redirect('pelicula_info', slug=pelicula.slug)
 
-        # Registrar la descarga
-        DescargaUsuarioPelicula.objects.create(user=request.user, movie=pelicula)
-        messages.success(request, 'Descarga completada ✨')
+            DescargaUsuarioPelicula.objects.create(user=request.user, movie=pelicula)
+            messages.success(request, '✅ Descarga completada ✨')
 
-        # Devolver el archivo
-        return FileResponse(
-            pelicula.archivo.open(),
-            as_attachment=True,
-            filename=os.path.basename(pelicula.archivo.name)
-        )
-
-
+            try:
+                response = FileResponse(
+                    pelicula.archivo.open(),
+                    as_attachment=True,
+                    filename=os.path.basename(pelicula.archivo.name)
+                )
+                return response
+            except IOError:
+                messages.error(request, '❌ Error al acceder al archivo')
+                return redirect('pelicula_info', slug=pelicula.slug)
+                
+        except Exception as e:
+            messages.error(request, '❌ Error inesperado al procesar la descarga')
+            return redirect('index')
 
 
 # para registrar una nueva descarga
-class DescargaCreateView(LoginRequiredMixin,View):
+class DescargaCreateView(LoginRequiredMixin, View):
     template_name = 'partials/descarga_form.html'
 
     def get(self, request):
-        # inyectamos el user para que el form filtre las películas ya descargadas
         form = DescargaForm(user=request.user)
         return render(request, self.template_name, {'form': form})
 
@@ -503,8 +552,11 @@ class DescargaCreateView(LoginRequiredMixin,View):
             descarga = form.save(commit=False)
             descarga.user = request.user
             descarga.save()
+            messages.success(request, '✅ Descarga registrada exitosamente')
             return redirect('descarga_list')
-        return render(request, self.template_name, {'form': form})
+        messages.error(request, '❌ Error al registrar la descarga')
+        return render(request, self.template_name, {'form': DescargaForm(user=request.user)})
+
 
 # para eliminar una descarga (solo el dueño o staff)
 class DescargaDeleteView(LoginRequiredMixin, View):
@@ -512,22 +564,37 @@ class DescargaDeleteView(LoginRequiredMixin, View):
 
     def get(self, request, pk):
         descarga = get_object_or_404(DescargaUsuarioPelicula, pk=pk)
-        # Solo el dueño o staff puede verla
         if not (request.user.is_staff or descarga.user == request.user):
-            return redirect('descarga_list')
+            messages.error(request, '❌ Solo puedes eliminar tus propias descargas.')
+            raise PermissionDenied
         return render(request, self.template_name, {'object': descarga})
 
     def post(self, request, pk):
         descarga = get_object_or_404(DescargaUsuarioPelicula, pk=pk)
-        if request.user.is_staff or descarga.user == request.user:
-            descarga.delete()
+        if not (request.user.is_staff or descarga.user == request.user):
+            messages.error(request, '❌ Solo puedes eliminar tus propias descargas.')
+            raise PermissionDenied
+        descarga.delete()
+        messages.success(request, '✅ Descarga eliminada correctamente.')
         return redirect('descarga_list')
+    
 
-class DescargaListView(LoginRequiredMixin, View):
-    template_name = 'partials/descarga_list.html'
+# Para vistas que requieren ser superuser
+class SuperUserRequiredMixin:
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            messages.error(request, '👑 Solo los superusuarios pueden acceder a esta función')
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
 
-    def get(self, request):
-        descargas = DescargaUsuarioPelicula.objects.filter(user=request.user).order_by('-fecha_descarga')
-        return render(request, self.template_name, {'descargas': descargas})
+# Para vistas que solo el dueño puede modificar
+class OwnerRequiredMixin:
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.user != request.user and not request.user.is_staff:
+            messages.error(request, '🚫 No tienes permisos para realizar esta acción')
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
 
-
+    def get_object(self):
+        return get_object_or_404(DescargaUsuarioPelicula, pk=self.kwargs['pk'])

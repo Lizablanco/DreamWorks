@@ -8,7 +8,7 @@ from .views import (
     CuriosidadListView, CuriosidadCreateView, CuriosidadUpdateView, CuriosidadDeleteView,
     GeneroListView, GeneroCreateView, GeneroUpdateView, GeneroDeleteView,
     MovieListView, MovieCreateView, MovieUpdateView, MovieDeleteView,
-    DescargaListView, DescargaCreateView, DescargaDeleteView,
+    DescargaPeliculaView, DescargaCreateView, DescargaDeleteView,
     PeliculaInfoView, DescargaPeliculaView,
     archivo_no_disponible, guardar_opinion_general, CommentView, LoginView, RegistroView, UserLogoutView,OpinionesDelReinoView,
 )
@@ -33,17 +33,17 @@ urlpatterns = [
     path('opinion-general/', guardar_opinion_general, name='comment_general'),
     path('opiniones/', OpinionesDelReinoView.as_view(), name='opiniones_del_reino'),
 
-    # CRUD de Curiosidades
-    path('curiosidades/', CuriosidadListView.as_view(), name='curiosidad_list'),
-    path('curiosidades/nueva/', CuriosidadCreateView.as_view(), name='curiosidad_nueva'),
-    path('curiosidades/<int:pk>/editar/', CuriosidadUpdateView.as_view(), name='curiosidad_editar'),
-    path('curiosidades/<int:pk>/borrar/', CuriosidadDeleteView.as_view(), name='curiosidad_borrar'),
-
-    # CRUD de Géneros
-    path('generos/', GeneroListView.as_view(), name='genero_list'),
-    path('generos/nuevo/', GeneroCreateView.as_view(), name='genero_nuevo'),
-    path('generos/<int:pk>/editar/', GeneroUpdateView.as_view(), name='genero_editar'),
-    path('generos/<int:pk>/borrar/', GeneroDeleteView.as_view(), name='genero_borrar'),
+    # Curiosidades
+    path('curiosidades/', views.CuriosidadListView.as_view(), name='curiosidad_list'),
+    path('curiosidades/nueva/', views.CuriosidadCreateView.as_view(), name='curiosidad_nueva'),
+    path('curiosidades/<int:pk>/editar/', views.CuriosidadUpdateView.as_view(), name='curiosidad_editar'),
+    path('curiosidades/<int:pk>/borrar/', views.CuriosidadDeleteView.as_view(), name='curiosidad_borrar'),
+    
+    # Géneros
+    path('generos/', views.GeneroListView.as_view(), name='genero_list'),
+    path('generos/nuevo/', views.GeneroCreateView.as_view(), name='genero_nuevo'),
+    path('generos/<int:pk>/editar/', views.GeneroUpdateView.as_view(), name='genero_editar'),
+    path('generos/<int:pk>/borrar/', views.GeneroDeleteView.as_view(), name='genero_borrar'),
 
     # CRUD de Películas
     path('peliculas/', MovieListView.as_view(), name='movie_list'),
@@ -52,7 +52,7 @@ urlpatterns = [
     path('peliculas/<int:pk>/borrar/', MovieDeleteView.as_view(), name='movie_borrar'),
 
     # Descargas de películas
-    path('descargas/', DescargaListView.as_view(), name='descarga_list'),
+    path('descargas/', DescargaPeliculaView.as_view(), name='descarga_list'),
     path('descargas/nueva/', DescargaCreateView.as_view(), name='descarga_nueva'),
     path('descargas/<int:pk>/borrar/', DescargaDeleteView.as_view(), name='descarga_borrar'),
 

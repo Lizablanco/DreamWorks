@@ -17,6 +17,24 @@
     
     <!-- Estilos inline críticos -->
     <style>
+    /* OCULTAR TODOS LOS ERRORES DE FORMULARIOS */
+    .errorlist {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        width: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        opacity: 0 !important;
+    }
+    
+    /* Remover clases de error de los campos */
+    .error {
+        border-color: initial !important;
+        background-color: initial !important;
+    }
+</style>
+    <style>
         /* ESTILOS FORZADOS PARA SOBREESCRIBIR BOOTSTRAP */
         .dreamworks-main {
             font-family: 'UnifrakturMaguntia', cursive !important;
@@ -52,6 +70,63 @@
         .formulario-login {
             display: none !important;
         }
+
+        /* ESTILOS MEJORADOS PARA MENSAJES */
+        .alert-medieval {
+            font-family: 'MedievalSharp', cursive !important;
+            border: 2px solid #8b4513;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #f5e7c1, #e6d6a8);
+            color: #5c3317;
+            box-shadow: 0 5px 15px rgba(139, 69, 19, 0.3);
+        }
+        
+        .alert-medieval.alert-danger {
+            background: linear-gradient(135deg, #ffebee, #ffcdd2);
+            border-color: #c62828;
+            color: #b71c1c;
+        }
+        
+        .alert-medieval.alert-success {
+            background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+            border-color: #2e7d32;
+            color: #1b5e20;
+        }
+        
+        .alert-medieval.alert-warning {
+            background: linear-gradient(135deg, #fff8e1, #ffecb3);
+            border-color: #ff8f00;
+            color: #e65100;
+        }
+        
+        .alert-medieval.alert-info {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border-color: #1565c0;
+            color: #0d47a1;
+        }
+        
+        .medieval-icon {
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
+        
+        .btn-close-medieval {
+            opacity: 0.7;
+            color: inherit;
+        }
+        
+        .btn-close-medieval:hover {
+            opacity: 1;
+        }
+
+        /* Posicionamiento fijo para mensajes */
+        .messages-fixed-container {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 9999;
+            width: 350px;
+        }
     </style>
     <style>
     /* 1. Transición suave en todo el documento */
@@ -71,17 +146,45 @@
 
     {% include 'partials/header.html' %}
     
+    <!-- Contenedor de mensajes flotantes -->
+    <div class="messages-fixed-container">
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show alert-medieval" role="alert">
+                <div class="d-flex align-items-center">
+                    <span class="medieval-icon">
+                        {% if message.tags == 'error' or message.tags == 'danger' %}⚔️
+                        {% elif message.tags == 'success' %}✨
+                        {% elif message.tags == 'warning' %}🛡️
+                        {% else %}📜{% endif %}
+                    </span>
+                    <span>{{ message }}</span>
+                </div>
+                <button type="button" class="btn-close btn-close-medieval" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
     <main>
-    <div class="container mt-3">
+    <div class="messages-fixed-container">
     {% if messages %}
         {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show alert-medieval" role="alert">
+            <div class="d-flex align-items-center">
+                <span class="medieval-icon">
+                    {% if message.tags == 'error' %}⚔️
+                    {% elif message.tags == 'success' %}✨
+                    {% elif message.tags == 'warning' %}🛡️
+                    {% else %}📜{% endif %}
+                </span>
+                <span>{{ message }}</span>
+            </div>
+            <button type="button" class="btn-close btn-close-medieval" data-bs-dismiss="alert" aria-label="Cerrar"></button>
         </div>
         {% endfor %}
     {% endif %}
-    </div>
+</div>
     
 
     {% block content %}
@@ -114,6 +217,20 @@ document.addEventListener('DOMContentLoaded', () => {
     <!-- Scripts JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
+    <!-- Script para auto-cerrar mensajes -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-cerrar alerts después de 5 segundos
+            setTimeout(function() {
+                var alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    var bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 5000);
+        });
+    </script>
+
     <!--scripts para contar en las opiniones generales-->
     <script>
   document.addEventListener('DOMContentLoaded', function () {
@@ -136,7 +253,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 </script>
-
+<script>
+// En tu base.html, agrega este script para remover errores
+document.addEventListener('DOMContentLoaded', function() {
+    // Eliminar todos los errores de formulario
+    const errorLists = document.querySelectorAll('.errorlist');
+    errorLists.forEach(function(errorList) {
+        errorList.remove();
+    });
+    
+    // Remover clases de error de los campos
+    const errorInputs = document.querySelectorAll('.error');
+    errorInputs.forEach(function(input) {
+        input.classList.remove('error');
+    });
+});
+</script>
 
     <!-- Script para animaciones de fondo -->
     <script>
@@ -271,7 +403,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <script>
   /**
    * smoothScrollTo: anima el scroll desde startY hasta targetY
-   * con una función de easing “easeInOutQuad”.
+   * con una función de easing "easeInOutQuad".
    */
   function smoothScrollTo(startY, targetY, duration = 600) {
     let startTime = null;
